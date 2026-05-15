@@ -23,57 +23,42 @@ $inicio = $_GET['inicio'] ?? '';
 $fim    = $_GET['fim']    ?? '';
 
 if (empty($data) || empty($inicio) || empty($fim)) {
-    responder(['sucesso' => false, 'computadores' => $ESTOQUE_PCS, 'tablets' => $ESTOQUE_TABS, 'celulares' => $ESTOQUE_CELS]);
+    responder(['sucesso' => false, 'erro' => 'Dados incompletos.']);
 }
 
 try {
-    // Pega todas as reservas que cruzam o mesmo horário (Overlapping)
-    $stmt = $pdo->prepare("
-        SELECT horario_inicio, horario_fim, qtd_computadores, qtd_tablets, qtd_celulares 
-        FROM agendamentos 
-        WHERE data_reserva = ? AND horario_inicio < ? AND horario_fim > ?
+    // 1. Busca todos os equipamentos cadastrados
+    $stmt_eq = $pdo->query("SELECT id, nome, quantidade_total FROM equipamentos");
+    $equipamentos = $stmt_eq->fetchAll();
+
+    // 2. Busca todas as reservas que conflitam com o horário solicitado
+    $stmt_check = $pdo->prepare("
+        SELECT i.id_equipamento, SUM(i.quantidade) as total_usado
+        FROM agendamento_itens i
+        JOIN agendamentos a ON i.id_agendamento = a.id
+        WHERE a.data_reserva = ? AND a.horario_inicio < ? AND a.horario_fim > ?
+        GROUP BY i.id_equipamento
     ");
-    $stmt->execute([$data, $fim, $inicio]);
-    $reservas = $stmt->fetchAll();
+    $stmt_check->execute([$data, $fim, $inicio]);
+    $usados = $stmt_check->fetchAll(PDO::FETCH_KEY_PAIR); // Retorna [id_equipamento => total_usado]
 
-    // Algoritmo de Linha de Varredura (Sweep-Line) para calcular o pico de concorrência
-    $eventos = [];
-    foreach ($reservas as $res) {
-        $eventos[] = ['time' => $res['horario_inicio'], 'tipo' =>  1, 'pcs' => $res['qtd_computadores'], 'tabs' => $res['qtd_tablets'], 'cels' => $res['qtd_celulares']];
-        $eventos[] = ['time' => $res['horario_fim'],    'tipo' => -1, 'pcs' => $res['qtd_computadores'], 'tabs' => $res['qtd_tablets'], 'cels' => $res['qtd_celulares']];
+    // 3. Calcula o saldo disponível para cada equipamento
+    $estoque = [];
+    foreach ($equipamentos as $eq) {
+        $id = $eq['id'];
+        $total = (int)$eq['quantidade_total'];
+        $em_uso = (int)($usados[$id] ?? 0);
+        
+        $disponivel = $total - $em_uso;
+        $estoque[$id] = max(0, $disponivel);
     }
 
-    usort($eventos, function($a, $b) {
-        if ($a['time'] == $b['time']) return $a['tipo'] - $b['tipo']; // Tipo -1 vem antes de 1 (libera antes de alocar na mesma exata hora)
-        return strcmp($a['time'], $b['time']);
-    });
-
-    $current_pcs = 0; $current_tabs = 0; $current_cels = 0;
-    $max_pcs     = 0; $max_tabs     = 0; $max_cels     = 0;
-
-    foreach ($eventos as $e) {
-        if ($e['tipo'] == 1) {
-            $current_pcs += $e['pcs'];
-            $current_tabs += $e['tabs'];
-            $current_cels += $e['cels'];
-        } else {
-            $current_pcs -= $e['pcs'];
-            $current_tabs -= $e['tabs'];
-            $current_cels -= $e['cels'];
-        }
-        if ($current_pcs  > $max_pcs)  $max_pcs  = $current_pcs;
-        if ($current_tabs > $max_tabs) $max_tabs = $current_tabs;
-        if ($current_cels > $max_cels) $max_cels = $current_cels;
-    }
-
-    // Calcula os equipamentos ainda disponíveis (Max Global - Pico de Uso simultâneo)
-    $disp_pcs  = max(0, $ESTOQUE_PCS  - $max_pcs);
-    $disp_tabs = max(0, $ESTOQUE_TABS - $max_tabs);
-    $disp_cels = max(0, $ESTOQUE_CELS - $max_cels);
-
-    responder(['sucesso' => true, 'computadores' => $disp_pcs, 'tablets' => $disp_tabs, 'celulares' => $disp_cels]);
+    responder([
+        'sucesso' => true,
+        'estoque' => $estoque
+    ]);
 
 } catch (PDOException $e) {
-    responder(['sucesso' => false, 'erro' => 'Erro interno de banco de dados.']);
+    responder(['sucesso' => false, 'erro' => 'Erro ao verificar disponibilidade: ' . $e->getMessage()]);
 }
 ?>

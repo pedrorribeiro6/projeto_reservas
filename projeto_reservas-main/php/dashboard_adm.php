@@ -37,6 +37,7 @@ $total_prof = $stmt2->fetchColumn();
             <li><a href="dashboard_adm.php" class="active">INÍCIO</a></li>
             <li><a href="agendamentos_adm.php">TODAS AS RESERVAS</a></li>
             <li><a href="docentes.php">CORPO DOCENTE</a></li>
+            <li><a href="dispositivos.php">DISPOSITIVOS</a></li>
             <li><a href="logout.php" class="btn-logout">SAIR</a></li>
             <li><button id="theme-toggle" class="nav-theme-btn" aria-label="Alternar Tema">🌞</button></li>
         </ul>
@@ -44,21 +45,27 @@ $total_prof = $stmt2->fetchColumn();
 
     <main class="dashboard-wrapper">
         <header class="dash-header">
-            <h1 class="massive-title">BEM VINDO, <?= htmlspecialchars($_SESSION['usuario_nome']) ?></h1>
+            <h1 class="massive-title">PAINEL DE CONTROLE</h1>
             <div class="glitch-line-prof"></div>
         </header>
 
         <section class="dash-stats">
-            <div class="stat-card" style="border-top: 4px solid var(--accent-prof);">
-                <h2>VISÃO DE HOJE</h2>
-                <p>Existem <strong><?= $total_hoje ?></strong> reserva(s) registradas para a data de hoje.</p>
-                <a href="agendamentos_adm.php" class="btn-action">GERENCIAR RESERVAS ↗</a>
+            <div class="stat-card">
+                <h2>RESERVAS</h2>
+                <p>Controle global de todos os agendamentos realizados pela instituição.</p>
+                <a href="agendamentos_adm.php" class="btn-action">GERENCIAR →</a>
             </div>
             
-            <div class="stat-card" style="border-top: 4px solid var(--accent-prof);">
+            <div class="stat-card">
                 <h2>CORPO DOCENTE</h2>
-                <p>Atualmente o sistema possui <strong><?= $total_prof ?></strong> professor(es) cadastrado(s) no banco de dados.</p>
-                <a href="docentes.php" class="btn-action">GERENCIAR DOCENTES ↗</a>
+                <p>Visualize, busque e gerencie todos os professores cadastrados no sistema.</p>
+                <a href="docentes.php" class="btn-action">VISUALIZAR →</a>
+            </div>
+
+            <div class="stat-card">
+                <h2>DISPOSITIVOS</h2>
+                <p>Configure o estoque total de computadores, tablets e novos itens.</p>
+                <a href="dispositivos.php" class="btn-action">CONFIGURAR →</a>
             </div>
         </section>
     </main>

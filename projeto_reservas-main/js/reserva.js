@@ -60,16 +60,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Pega valores
-        const pcs  = parseInt(document.getElementById('qtd_computadores').value) || 0;
-        const tabs = parseInt(document.getElementById('qtd_tablets').value)      || 0;
-        const cels = parseInt(document.getElementById('qtd_celulares').value)    || 0;
+        // Validação Dinâmica de Quantidade
+        const equipInputs = document.querySelectorAll('.equip-input');
+        let totalEquipamentos = 0;
+        let erroEstoque = false;
 
-        // Validação Frontend de Quantidade Máxima
-        if (pcs > 35)  { showFeedback('ERRO: O limite de Computadores no estoque é 35.', 'error'); return; }
-        if (tabs > 24) { showFeedback('ERRO: O limite de Tablets no estoque é 24.', 'error');       return; }
-        if (cels > 12) { showFeedback('ERRO: O limite de Celulares no estoque é 12.', 'error');    return; }
-        if (pcs === 0 && tabs === 0 && cels === 0) {
+        equipInputs.forEach(input => {
+            const qtd = parseInt(input.value) || 0;
+            const max = parseInt(input.max) || 0;
+            const nome = input.parentElement.querySelector('h3').textContent;
+
+            if (qtd > max) {
+                showFeedback(`ERRO: O limite de ${nome} para este horário é ${max}.`, 'error');
+                erroEstoque = true;
+            }
+            totalEquipamentos += qtd;
+        });
+
+        if (erroEstoque) return;
+
+        if (totalEquipamentos === 0) {
             showFeedback('ERRO: Você precisa selecionar pelo menos um equipamento para reservar.', 'error');
             return;
         }

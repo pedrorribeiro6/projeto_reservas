@@ -1,5 +1,6 @@
 <?php
 require 'auth.php';
+require 'conexao.php';
 proteger_pagina('professor');
 ?>
 <!DOCTYPE html>
@@ -75,21 +76,26 @@ proteger_pagina('professor');
             <div class="form-section">
                 <h2>2. EQUIPAMENTOS (MÁXIMOS PERMITIDOS)</h2>
                 <div class="grid-equipamentos">
-                    <div class="equip-card">
-                        <h3>COMPUTADORES</h3>
-                        <p class="limit-badge">MÁX: 35</p>
-                        <input type="number" id="qtd_computadores" name="qtd_computadores" min="0" max="35" value="0">
-                    </div>
-                    <div class="equip-card">
-                        <h3>TABLETS</h3>
-                        <p class="limit-badge">MÁX: 24</p>
-                        <input type="number" id="qtd_tablets" name="qtd_tablets" min="0" max="24" value="0">
-                    </div>
-                    <div class="equip-card">
-                        <h3>CELULARES</h3>
-                        <p class="limit-badge">MÁX: 12</p>
-                        <input type="number" id="qtd_celulares" name="qtd_celulares" min="0" max="12" value="0">
-                    </div>
+                    <?php
+                    // Busca todos os equipamentos disponíveis
+                    $stmt_eq = $pdo->query("SELECT * FROM equipamentos ORDER BY nome ASC");
+                    $equipamentos = $stmt_eq->fetchAll();
+                    
+                    foreach ($equipamentos as $eq): 
+                    ?>
+                        <div class="equip-card" data-id="<?= $eq['id'] ?>">
+                            <h3><?= htmlspecialchars($eq['nome']) ?></h3>
+                            <p class="limit-badge">MÁX: <?= $eq['quantidade_total'] ?></p>
+                            <input type="number" 
+                                   id="equip_<?= $eq['id'] ?>" 
+                                   name="quantidade[<?= $eq['id'] ?>]" 
+                                   class="equip-input"
+                                   min="0" 
+                                   max="<?= $eq['quantidade_total'] ?>" 
+                                   value="0"
+                                   data-max-original="<?= $eq['quantidade_total'] ?>">
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
             

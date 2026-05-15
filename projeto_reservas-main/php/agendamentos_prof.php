@@ -44,22 +44,34 @@ $agendamentos = $stmt->fetchAll();
         </header>
 
         <section class="bookings-list">
-            <?php if (count($agendamentos) > 0): ?>
-                <?php foreach ($agendamentos as $ag): ?>
+            <?php 
+            if (count($agendamentos) > 0): 
+                foreach ($agendamentos as $ag): 
+                    // Busca os itens específicos desta reserva
+                    $stmt_itens = $pdo->prepare("
+                        SELECT i.quantidade, e.nome 
+                        FROM agendamento_itens i 
+                        JOIN equipamentos e ON i.id_equipamento = e.id 
+                        WHERE i.id_agendamento = ?
+                    ");
+                    $stmt_itens->execute([$ag['id']]);
+                    $itens = $stmt_itens->fetchAll();
+            ?>
                     <div class="booking-card">
                         <div class="booking-header">
                             <span class="booking-date"><?= date('d/m/Y', strtotime($ag['data_reserva'])) ?></span>
                             <span class="booking-time"><?= date('H:i', strtotime($ag['horario_inicio'])) ?> - <?= date('H:i', strtotime($ag['horario_fim'])) ?></span>
                         </div>
                         <div class="booking-body">
-                            <?php if($ag['qtd_computadores'] > 0): ?>
-                                <div class="equip-tag">💻 PCs: <strong><?= $ag['qtd_computadores'] ?></strong></div>
-                            <?php endif; ?>
-                            <?php if($ag['qtd_tablets'] > 0): ?>
-                                <div class="equip-tag">📱 Tablets: <strong><?= $ag['qtd_tablets'] ?></strong></div>
-                            <?php endif; ?>
-                            <?php if($ag['qtd_celulares'] > 0): ?>
-                                <div class="equip-tag">📲 Celulares: <strong><?= $ag['qtd_celulares'] ?></strong></div>
+                            <?php if (count($itens) > 0): ?>
+                                <?php foreach ($itens as $item): ?>
+                                    <div class="equip-tag">📦 <?= htmlspecialchars($item['nome']) ?>: <strong><?= $item['quantidade'] ?></strong></div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <!-- Fallback para reservas legadas (antes da migração) -->
+                                <?php if($ag['qtd_computadores'] > 0): ?><div class="equip-tag">💻 PCs: <strong><?= $ag['qtd_computadores'] ?></strong></div><?php endif; ?>
+                                <?php if($ag['qtd_tablets'] > 0): ?><div class="equip-tag">📱 Tablets: <strong><?= $ag['qtd_tablets'] ?></strong></div><?php endif; ?>
+                                <?php if($ag['qtd_celulares'] > 0): ?><div class="equip-tag">📲 Celulares: <strong><?= $ag['qtd_celulares'] ?></strong></div><?php endif; ?>
                             <?php endif; ?>
                         </div>
                         <div class="booking-footer" style="display: flex; justify-content: space-between; align-items: center;">

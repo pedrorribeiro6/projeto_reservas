@@ -9,16 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dataInput.setAttribute('min', `${yyyy}-${mm}-${dd}`);
     }
 
-    const inicioInput = document.getElementById('horario_inicio');
-    const fimInput = document.getElementById('horario_fim');
-    const pcsInput = document.getElementById('qtd_computadores');
-    const tabsInput = document.getElementById('qtd_tablets');
-    const celsInput = document.getElementById('qtd_celulares');
-    
-    // As Tags HTML que exibem o "MÁX: X"
-    const badgePcs = pcsInput?.previousElementSibling;
-    const badgeTabs = tabsInput?.previousElementSibling;
-    const badgeCels = celsInput?.previousElementSibling;
+    const equipInputs = document.querySelectorAll('.equip-input');
 
     // Utilidade para converter '07:30' em número 730 para checagem matemática
     function formatTime(timeStr) {
@@ -34,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function checkHorarios() {
-        if (!inicioInput.value || !fimInput.value) return true;
+        if (!inicioInput?.value || !fimInput?.value) return true;
         
         const ini = formatTime(inicioInput.value);
         const fim = formatTime(fimInput.value);
@@ -65,8 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 3. Checagem Assíncrona de Estoque Real
     async function updateDisponibilidade() {
-        if (!dataInput.value || !inicioInput.value || !fimInput.value) {
-            setLimits(35, 24, 12); // Padrões se os campos estiverem vazios
+        if (!dataInput?.value || !inicioInput?.value || !fimInput?.value) {
+            resetLimits();
             return;
         }
 
@@ -77,32 +68,39 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await res.json();
 
             if (data.sucesso) {
-                setLimits(data.computadores, data.tablets, data.celulares);
+                setLimits(data.estoque);
             }
         } catch (e) {
             console.error("Erro no servidor ao buscar limite de estoque:", e);
         }
     }
 
-    function setLimits(maxPcs, maxTabs, maxCels) {
-        if (pcsInput) {
-            pcsInput.max = maxPcs;
-            badgePcs.textContent = `RESTAM: ${maxPcs}`;
-            if (parseInt(pcsInput.value) > maxPcs) pcsInput.value = maxPcs; // Força redução automática
-            pcsInput.parentElement.style.opacity = maxPcs === 0 ? '0.5' : '1';
-        }
-        if (tabsInput) {
-            tabsInput.max = maxTabs;
-            badgeTabs.textContent = `RESTAM: ${maxTabs}`;
-            if (parseInt(tabsInput.value) > maxTabs) tabsInput.value = maxTabs;
-            tabsInput.parentElement.style.opacity = maxTabs === 0 ? '0.5' : '1';
-        }
-        if (celsInput) {
-            celsInput.max = maxCels;
-            badgeCels.textContent = `RESTAM: ${maxCels}`;
-            if (parseInt(celsInput.value) > maxCels) celsInput.value = maxCels;
-            celsInput.parentElement.style.opacity = maxCels === 0 ? '0.5' : '1';
-        }
+    function setLimits(estoqueReal) {
+        equipInputs.forEach(input => {
+            const id = input.id.replace('equip_', '');
+            const maxReal = estoqueReal[id] !== undefined ? estoqueReal[id] : parseInt(input.getAttribute('data-max-original'));
+            
+            input.max = maxReal;
+            const badge = input.previousElementSibling;
+            if (badge && badge.classList.contains('limit-badge')) {
+                badge.textContent = `RESTAM: ${maxReal}`;
+            }
+            
+            if (parseInt(input.value) > maxReal) input.value = maxReal;
+            input.parentElement.style.opacity = maxReal === 0 ? '0.5' : '1';
+        });
+    }
+
+    function resetLimits() {
+        equipInputs.forEach(input => {
+            const maxOriginal = input.getAttribute('data-max-original');
+            input.max = maxOriginal;
+            const badge = input.previousElementSibling;
+            if (badge && badge.classList.contains('limit-badge')) {
+                badge.textContent = `MÁX: ${maxOriginal}`;
+            }
+            input.parentElement.style.opacity = '1';
+        });
     }
 
     // Monitores de input
@@ -115,7 +113,95 @@ document.addEventListener('DOMContentLoaded', () => {
 (function () {
     // ── Injeta os modais no DOM quando a página carregar ──────────────────
     const html = `
-    <!-- Modal de Confirmação -->
+    <!-- Modal de Confirmação para DISPOSITIVOS (Vermelho) -->
+    <div id="modal-confirm-disp" style="
+        display:none; position:fixed; inset:0; z-index:10010;
+        background:rgba(0,0,0,0.85); backdrop-filter:blur(8px);
+        align-items:center; justify-content:center;">
+      <div style="
+          background:#0f0f0f; border:2px solid #FA1E4E;
+          border-radius:12px; padding:2.5rem 2rem; max-width:440px; width:90%;
+          text-align:center; box-shadow:0 0 40px rgba(250,30,78,0.25);
+          animation:modalInDel .3s both;">
+        <div style="font-size:2.5rem; margin-bottom:.5rem;">⚠️</div>
+        <h2 style="color:#FA1E4E; font-family:'Rajdhani',sans-serif;
+            font-size:1.6rem; letter-spacing:.08em; margin:0 0 .6rem; text-transform:uppercase;">
+            EXCLUIR DISPOSITIVO?
+        </h2>
+        <p style="color:#aaa; font-size:.9rem; margin:0 0 1.6rem; line-height:1.5;">
+            Isso impedirá que novos agendamentos sejam feitos para este item.<br>
+            <strong style="color:#fff;">Essa ação não pode ser desfeita.</strong>
+        </p>
+        <div style="display:flex; gap:.8rem; justify-content:center;">
+          <button id="modal-confirm-disp-cancelar" style="
+              background:transparent; color:#aaa; border:1px solid #444;
+              border-radius:6px; padding:.7rem 1.8rem; font-family:'Rajdhani',sans-serif;
+              font-size:1rem; font-weight:700; cursor:pointer;">
+              CANCELAR
+          </button>
+          <button id="modal-confirm-disp-ok" style="
+              background:#FA1E4E; color:#fff; border:none;
+              border-radius:6px; padding:.7rem 1.8rem; font-family:'Rajdhani',sans-serif;
+              font-size:1rem; font-weight:700; cursor:pointer;">
+              SIM, EXCLUIR
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Sucesso para DISPOSITIVOS (Ciano) -->
+    <div id="modal-sucesso-disp" style="
+        display:none; position:fixed; inset:0; z-index:10011;
+        background:rgba(0,0,0,0.85); backdrop-filter:blur(8px);
+        align-items:center; justify-content:center;">
+      <div style="
+          background:#0f0f0f; border:2px solid #00F0FF;
+          border-radius:12px; padding:2.5rem 2rem; max-width:400px; width:90%;
+          text-align:center; box-shadow:0 0 40px rgba(0,240,255,0.20);
+          animation:modalInDel .35s both;">
+        <div style="font-size:3rem; margin-bottom:.5rem;">🗑️</div>
+        <h2 style="color:#00F0FF; font-family:'Rajdhani',sans-serif;
+            font-size:1.6rem; letter-spacing:.1em; margin:0 0 .5rem; text-transform:uppercase;">
+            DISPOSITIVO REMOVIDO!
+        </h2>
+        <p style="color:#ccc; font-size:.9rem; margin:0 0 1.8rem; line-height:1.4;">
+            O equipamento foi excluído com sucesso do inventário da escola.
+        </p>
+        <button id="modal-sucesso-disp-fechar" style="
+            background:#00F0FF; color:#000; border:none; border-radius:6px;
+            padding:.7rem 2.5rem; font-family:'Rajdhani',sans-serif;
+            font-size:1rem; font-weight:700; letter-spacing:.08em; cursor:pointer;">
+            FECHAR
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal de Falha/Erro para DISPOSITIVOS (Vermelho) -->
+    <div id="modal-erro-disp" style="
+        display:none; position:fixed; inset:0; z-index:10012;
+        background:rgba(0,0,0,0.85); backdrop-filter:blur(8px);
+        align-items:center; justify-content:center;">
+      <div style="
+          background:#0f0f0f; border:2px solid #FA1E4E;
+          border-radius:12px; padding:2.5rem 2rem; max-width:400px; width:90%;
+          text-align:center; box-shadow:0 0 40px rgba(250,30,78,0.25);
+          animation:modalInDel .3s both;">
+        <div style="font-size:2.5rem; margin-bottom:.5rem;">🚫</div>
+        <h2 style="color:#FA1E4E; font-family:'Rajdhani',sans-serif;
+            font-size:1.5rem; letter-spacing:.08em; margin:0 0 .6rem; text-transform:uppercase;">
+            FALHA NA EXCLUSÃO
+        </h2>
+        <p id="modal-erro-disp-msg" style="color:#aaa; font-size:.9rem; margin:0 0 1.6rem; line-height:1.5;"></p>
+        <button id="modal-erro-disp-fechar" style="
+            background:#FA1E4E; color:#fff; border:none;
+            border-radius:6px; padding:.6rem 2.5rem; font-family:'Rajdhani',sans-serif;
+            font-size:1rem; font-weight:700; cursor:pointer;">
+            ENTENDI
+        </button>
+      </div>
+    </div>
+
+    <!-- Modais Legados de Reserva -->
     <div id="modal-confirm-excluir" style="
         display:none; position:fixed; inset:0; z-index:9998;
         background:rgba(0,0,0,0.80); backdrop-filter:blur(6px);
@@ -151,7 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     </div>
 
-    <!-- Modal de Sucesso -->
     <div id="modal-sucesso-excluir" style="
         display:none; position:fixed; inset:0; z-index:9999;
         background:rgba(0,0,0,0.80); backdrop-filter:blur(6px);
@@ -188,6 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('DOMContentLoaded', () => {
         document.body.insertAdjacentHTML('beforeend', html);
 
+        // Listeners Modais Reservas
         document.getElementById('modal-confirm-cancelar').addEventListener('click', () => {
             document.getElementById('modal-confirm-excluir').style.display = 'none';
         });
@@ -196,18 +282,69 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('modal-sucesso-excluir').style.display = 'none';
             window.location.reload();
         });
+
+        // Listeners Modais Dispositivos
+        document.getElementById('modal-confirm-disp-cancelar').addEventListener('click', () => {
+            document.getElementById('modal-confirm-disp').style.display = 'none';
+        });
+
+        document.getElementById('modal-sucesso-disp-fechar').addEventListener('click', () => {
+            document.getElementById('modal-sucesso-disp').style.display = 'none';
+            window.location.reload();
+        });
+
+        document.getElementById('modal-erro-disp-fechar').addEventListener('click', () => {
+            document.getElementById('modal-erro-disp').style.display = 'none';
+        });
     });
 
-    // ── Função global chamada pelos botões do PHP ─────────────────────────
+    // ── FUNÇÕES GLOBAIS DE UTILIDADE ─────────────────────────────────────
+    
+    window.confirmarExclusaoDispositivo = function (id) {
+        const modalConfirm  = document.getElementById('modal-confirm-disp');
+        const modalSucesso  = document.getElementById('modal-sucesso-disp');
+        const modalErro     = document.getElementById('modal-erro-disp');
+        const btnOk         = document.getElementById('modal-confirm-disp-ok');
+
+        modalConfirm.style.display = 'flex';
+
+        const novoBtn = btnOk.cloneNode(true);
+        btnOk.parentNode.replaceChild(novoBtn, btnOk);
+
+        novoBtn.addEventListener('click', async () => {
+            modalConfirm.style.display = 'none';
+            novoBtn.disabled = true;
+
+            try {
+                const res = await fetch('processa_dispositivo.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `acao=excluir&id=${id}`
+                });
+
+                const data = await res.json();
+                if (data.sucesso) {
+                    modalSucesso.style.display = 'flex';
+                } else {
+                    document.getElementById('modal-erro-disp-msg').textContent = data.erro;
+                    modalErro.style.display = 'flex';
+                }
+            } catch (e) {
+                document.getElementById('modal-erro-disp-msg').textContent = 'Erro de conexão com o servidor.';
+                modalErro.style.display = 'flex';
+            } finally {
+                novoBtn.disabled = false;
+            }
+        });
+    };
+
     window.confirmarExclusao = function (id) {
         const modalConfirm  = document.getElementById('modal-confirm-excluir');
         const modalSucesso  = document.getElementById('modal-sucesso-excluir');
         const btnOk         = document.getElementById('modal-confirm-ok');
 
-        // Exibe o modal de confirmação
         modalConfirm.style.display = 'flex';
 
-        // Remove listener anterior para evitar múltiplos disparos
         const novoBtn = btnOk.cloneNode(true);
         btnOk.parentNode.replaceChild(novoBtn, btnOk);
 
@@ -222,23 +359,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: `id=${id}`
                 });
 
-                const rawText = await res.text();
-                let data;
-                try {
-                    data = JSON.parse(rawText);
-                } catch {
-                    alert('ERRO INTERNO: Resposta inválida do servidor. Contacte o suporte.');
-                    console.error('Resposta bruta:', rawText);
-                    return;
-                }
-
+                const data = await res.json();
                 if (data.sucesso) {
                     modalSucesso.style.display = 'flex';
                 } else {
-                    alert('Falha ao excluir: ' + data.erro);
+                    window.exibirAlerta('FALHA NA EXCLUSÃO', data.erro);
                 }
             } catch (e) {
-                alert('ERRO DE REDE: Verifique sua conexão e tente novamente.');
+                window.exibirAlerta('ERRO DE CONEXÃO', 'Não foi possível contatar o servidor.');
             } finally {
                 novoBtn.disabled = false;
             }

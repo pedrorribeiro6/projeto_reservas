@@ -1,0 +1,200 @@
+/* style7.css - Gerenciamento de Dispositivos (Admin) */
+
+.devices-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.btn-add-device {
+    background: var(--accent-prof);
+    color: #000;
+    border: none;
+    padding: 1rem 2rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    box-shadow: 4px 4px 0 var(--border-dark);
+    transition: all 0.2s ease;
+}
+
+.btn-add-device:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--border-dark);
+}
+
+.devices-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.device-card {
+    background: #0F0F13;
+    border: 2px solid var(--border-dark);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 8px 8px 0 var(--border-dark);
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.light-theme .device-card {
+    background: #FFFFFF;
+}
+
+.device-card:hover {
+    border-color: var(--accent-prof);
+    box-shadow: 8px 8px 0 var(--accent-prof);
+    transform: translate(-4px, -4px);
+}
+
+.device-info h3 {
+    font-size: 1.8rem;
+    color: var(--text-color);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.device-stock {
+    font-size: 1.2rem;
+    color: var(--accent-prof);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.device-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-edit, .btn-delete-device {
+    flex: 1;
+    padding: 0.8rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid;
+    text-transform: uppercase;
+}
+
+.btn-edit {
+    background: transparent;
+    color: var(--accent-prof);
+    border-color: var(--accent-prof);
+}
+
+.btn-delete-device {
+    background: transparent;
+    color: var(--accent-red);
+    border-color: var(--accent-red);
+}
+
+.btn-edit:hover {
+    background: var(--accent-prof);
+    color: #000;
+}
+
+.btn-delete-device:hover {
+    background: var(--accent-red);
+    color: #FFF;
+}
+
+/* Modal Estilo (Reutilizando conceitos do sistema) */
+.device-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+}
+
+.device-modal-content {
+    background: #0F0F13;
+    border: 2px solid var(--accent-prof);
+    padding: 3rem;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 10px 10px 0 var(--border-dark);
+    position: relative;
+}
+
+.light-theme .device-modal-content {
+    background: #FFF;
+}
+
+.device-modal-content h2 {
+    color: var(--accent-prof);
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+}
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.modal-input-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.modal-input-box label {
+    font-weight: 700;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.modal-input-box input {
+    background: transparent;
+    border: 2px solid var(--border-dark);
+    color: var(--text-color);
+    padding: 1rem;
+    font-size: 1.2rem;
+    font-family: 'Rajdhani', sans-serif;
+    outline: none;
+}
+
+.modal-input-box input:focus {
+    border-color: var(--accent-prof);
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.btn-modal-save {
+    flex: 2;
+    background: var(--accent-prof);
+    color: #000;
+    border: none;
+    padding: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-modal-cancel {
+    flex: 1;
+    background: transparent;
+    color: #888;
+    border: 1px solid #444;
+    padding: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+}
