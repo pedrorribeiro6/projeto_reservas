@@ -1,10 +1,18 @@
 <?php
+ob_start(); // Captura qualquer saída indesejada (notices, warnings) antes do JSON
 session_start();
 require 'conexao.php';
 require 'auth.php';
 proteger_pagina('professor'); // Somente professor (ou admin) logado acessa aqui
 
 header('Content-Type: application/json');
+
+// Função auxiliar: limpa o buffer e emite JSON puro
+function responder(array $dados): void {
+    ob_clean();
+    echo json_encode($dados);
+    exit();
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_professor = $_SESSION['usuario_id'];
@@ -15,21 +23,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $qtd_tablets = (int)($_POST['qtd_tablets'] ?? 0);
     $qtd_celulares = (int)($_POST['qtd_celulares'] ?? 0);
 
+    // Validação de Fim de Semana (Segurança Back-end)
+    $dia_semana = (int)date('w', strtotime($data_reserva)); // 0 = Domingo, 6 = Sábado
+    if ($dia_semana === 0 || $dia_semana === 6) {
+        responder(['sucesso' => false, 'erro' => 'Agendamentos não são permitidos aos finais de semana (Sábado e Domingo).']);
+    }
+
     // Validação de Janela de Horário e Intervalo Escolar (Segurança Back-end)
     $h_ini = (int)str_replace(':', '', $horario_inicio);
     $h_fim = (int)str_replace(':', '', $horario_fim);
 
     if ($h_ini < 700 || $h_fim > 1800) {
-        echo json_encode(['sucesso' => false, 'erro' => 'Fora do horário escolar permitido (07:00 às 18:00).']);
-        exit();
+        responder(['sucesso' => false, 'erro' => 'Fora do horário escolar permitido (07:00 às 18:00).']);
     }
     if (($h_ini > 1220 && $h_ini < 1240) || ($h_fim > 1220 && $h_fim < 1240)) {
-        echo json_encode(['sucesso' => false, 'erro' => 'Não é permitido iniciar ou terminar agendamentos dentro do intervalo (12:20 às 12:40).']);
-        exit();
+        responder(['sucesso' => false, 'erro' => 'Não é permitido iniciar ou terminar agendamentos dentro do intervalo (12:20 às 12:40).']);
     }
     if ($h_ini < 1240 && $h_fim > 1220) {
-        echo json_encode(['sucesso' => false, 'erro' => 'A reserva não pode atravessar o horário do intervalo (12:20 às 12:40).']);
-        exit();
+        responder(['sucesso' => false, 'erro' => 'A reserva não pode atravessar o horário do intervalo (12:20 às 12:40).']);
     }
 
     // Validação de Overbooking com Algoritmo Sweep-Line no lado Servidor (Impede concorrência e hacks)
@@ -69,25 +80,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         if ($current_pcs > $ESTOQUE_PCS || $current_tabs > $ESTOQUE_TABS || $current_cels > $ESTOQUE_CELS) {
-            echo json_encode(['sucesso' => false, 'erro' => 'Conflito Crítico! O limite de equipamentos estourou nesse horário exato devido a outra reserva simultânea.']);
-            exit();
+            responder(['sucesso' => false, 'erro' => 'Conflito Crítico! O limite de equipamentos estourou nesse horário exato devido a outra reserva simultânea.']);
         }
     }
     
     if ($qtd_computadores == 0 && $qtd_tablets == 0 && $qtd_celulares == 0) {
-        echo json_encode(['sucesso' => false, 'erro' => 'Nenhum equipamento foi selecionado.']);
-        exit();
+        responder(['sucesso' => false, 'erro' => 'Nenhum equipamento foi selecionado.']);
     }
 
     try {
         $stmt = $pdo->prepare("INSERT INTO agendamentos (id_professor, qtd_computadores, qtd_tablets, qtd_celulares, data_reserva, horario_inicio, horario_fim) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt->execute([$id_professor, $qtd_computadores, $qtd_tablets, $qtd_celulares, $data_reserva, $horario_inicio, $horario_fim]);
-        
-        echo json_encode(['sucesso' => true]);
+        responder(['sucesso' => true]);
     } catch (PDOException $e) {
-        echo json_encode(['sucesso' => false, 'erro' => 'Erro interno do banco: ' . $e->getMessage()]);
+        responder(['sucesso' => false, 'erro' => 'Erro interno do banco: ' . $e->getMessage()]);
     }
 } else {
-    echo json_encode(['sucesso' => false, 'erro' => 'Método inválido.']);
+    responder(['sucesso' => false, 'erro' => 'Método inválido.']);
 }
 ?>

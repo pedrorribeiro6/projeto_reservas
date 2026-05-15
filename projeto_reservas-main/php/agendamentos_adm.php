@@ -25,8 +25,10 @@ $agendamentos = $stmt->fetchAll();
     <link rel="stylesheet" href="../css/style3.css">
     <link rel="stylesheet" href="../css/style5.css">
     <link rel="stylesheet" href="../css/style_adm.css">
+    <link rel="stylesheet" href="../css/style6.css">
     <script src="../js/script.js" defer></script>
-    <script src="../js/funcionalidade.js" defer></script>
+    <script src="../js/funcionalidade.js?v=<?= time() ?>" defer></script>
+    <script src="../js/filtro_adm.js?v=<?= time() ?>" defer></script>
     <link rel="icon" href="../imagens/sys_logo.png" type="image/png">
 </head>
 <body>
@@ -35,6 +37,7 @@ $agendamentos = $stmt->fetchAll();
         <ul class="nav-links">
             <li><a href="dashboard_adm.php">INÍCIO</a></li>
             <li><a href="agendamentos_adm.php" class="active">TODAS AS RESERVAS</a></li>
+            <li><a href="docentes.php">CORPO DOCENTE</a></li>
             <li><a href="logout.php" class="btn-logout">SAIR</a></li>
             <li><button id="theme-toggle" class="nav-theme-btn" aria-label="Alternar Tema">🌞</button></li>
         </ul>
@@ -46,10 +49,14 @@ $agendamentos = $stmt->fetchAll();
             <div class="glitch-line-prof"></div>
         </header>
 
-        <section class="bookings-list">
+        <div class="search-bar">
+            <input type="text" id="searchReserva" placeholder="BUSCAR RESERVAS POR NOME DO PROFESSOR...">
+        </div>
+
+        <section class="bookings-list" id="bookingsGrid">
             <?php if (count($agendamentos) > 0): ?>
                 <?php foreach ($agendamentos as $ag): ?>
-                    <div class="booking-card" style="border-left: 6px solid var(--accent-prof);">
+                    <div class="booking-card" data-professor="<?= strtolower(htmlspecialchars($ag['professor_nome'])) ?>" style="border-left: 6px solid var(--accent-prof);">
                         <div class="booking-header">
                             <span class="booking-date"><?= date('d/m/Y', strtotime($ag['data_reserva'])) ?></span>
                             <span class="booking-time"><?= date('H:i', strtotime($ag['horario_inicio'])) ?> - <?= date('H:i', strtotime($ag['horario_fim'])) ?></span>
@@ -74,7 +81,7 @@ $agendamentos = $stmt->fetchAll();
                         </div>
                         <div class="booking-footer" style="display: flex; justify-content: space-between; align-items: center;">
                             <span>ID da Reserva: #<?= str_pad($ag['id'], 4, '0', STR_PAD_LEFT) ?></span>
-                            <button class="btn-delete" onclick="excluirReserva(<?= $ag['id'] ?>)">EXCLUIR FORÇADAMENTE</button>
+                            <button class="btn-delete" onclick="confirmarExclusao(<?= $ag['id'] ?>)">EXCLUIR FORÇADAMENTE</button>
                         </div>
                     </div>
                 <?php endforeach; ?>

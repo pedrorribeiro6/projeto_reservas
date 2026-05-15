@@ -22,7 +22,7 @@ $agendamentos = $stmt->fetchAll();
     <link rel="stylesheet" href="../css/style3.css">
     <link rel="stylesheet" href="../css/style5.css">
     <script src="../js/script.js" defer></script>
-    <script src="../js/funcionalidade.js" defer></script>
+    <script src="../js/funcionalidade.js?v=<?= time() ?>" defer></script>
     <link rel="icon" href="../imagens/sys_logo.png" type="image/png">
 </head>
 <body>
@@ -64,7 +64,7 @@ $agendamentos = $stmt->fetchAll();
                         </div>
                         <div class="booking-footer" style="display: flex; justify-content: space-between; align-items: center;">
                             <span>ID da Reserva: #<?= str_pad($ag['id'], 4, '0', STR_PAD_LEFT) ?></span>
-                            <button class="btn-delete" onclick="excluirReserva(<?= $ag['id'] ?>)">EXCLUIR</button>
+                            <button class="btn-delete" onclick="confirmarExclusao(<?= $ag['id'] ?>)">EXCLUIR</button>
                         </div>
                     </div>
                 <?php endforeach; ?>

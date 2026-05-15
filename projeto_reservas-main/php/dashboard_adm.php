@@ -31,11 +31,12 @@ $total_prof = $stmt2->fetchColumn();
     <link rel="icon" href="../imagens/sys_logo.png" type="image/png">
 </head>
 <body>
-    <nav class="top-nav">
+        <nav class="top-nav">
         <div class="nav-brand">ADM<span>.</span>RES</div>
         <ul class="nav-links">
             <li><a href="dashboard_adm.php" class="active">INÍCIO</a></li>
             <li><a href="agendamentos_adm.php">TODAS AS RESERVAS</a></li>
+            <li><a href="docentes.php">CORPO DOCENTE</a></li>
             <li><a href="logout.php" class="btn-logout">SAIR</a></li>
             <li><button id="theme-toggle" class="nav-theme-btn" aria-label="Alternar Tema">🌞</button></li>
         </ul>
@@ -43,7 +44,7 @@ $total_prof = $stmt2->fetchColumn();
 
     <main class="dashboard-wrapper">
         <header class="dash-header">
-            <h1 class="massive-title">PAINEL DE COMANDO, <?= htmlspecialchars($_SESSION['usuario_nome']) ?></h1>
+            <h1 class="massive-title">BEM VINDO, <?= htmlspecialchars($_SESSION['usuario_nome']) ?></h1>
             <div class="glitch-line-prof"></div>
         </header>
 
@@ -57,6 +58,7 @@ $total_prof = $stmt2->fetchColumn();
             <div class="stat-card" style="border-top: 4px solid var(--accent-prof);">
                 <h2>CORPO DOCENTE</h2>
                 <p>Atualmente o sistema possui <strong><?= $total_prof ?></strong> professor(es) cadastrado(s) no banco de dados.</p>
+                <a href="docentes.php" class="btn-action">GERENCIAR DOCENTES ↗</a>
             </div>
         </section>
     </main>

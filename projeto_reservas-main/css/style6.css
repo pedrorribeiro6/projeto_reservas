@@ -1,0 +1,121 @@
+/* style6.css - Estilização da página de Corpo Docente */
+
+.search-bar {
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+.search-bar input {
+    width: 100%;
+    background: #0F0F13;
+    border: 2px solid var(--border-dark);
+    padding: 1.2rem;
+    color: var(--text-color);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    box-shadow: 4px 4px 0 var(--border-dark);
+    transition: all 0.2s ease;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: var(--accent-prof);
+    box-shadow: 6px 6px 0 var(--accent-prof);
+    transform: translate(-2px, -2px);
+}
+
+.light-theme .search-bar input {
+    background: #FFFFFF;
+}
+
+.docentes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.docente-card {
+    background: #0F0F13;
+    border: 2px solid var(--border-dark);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 8px 8px 0 var(--border-dark);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.light-theme .docente-card {
+    background: #FFFFFF;
+}
+
+.docente-card:hover {
+    border-color: var(--accent-prof);
+    box-shadow: 8px 8px 0 var(--accent-prof);
+    transform: translate(-4px, -4px);
+}
+
+.docente-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--accent-prof);
+}
+
+.docente-info h3 {
+    font-size: 1.8rem;
+    color: var(--text-color);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+}
+
+.docente-email {
+    font-size: 1.1rem;
+    color: var(--accent-prof);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.docente-date {
+    font-size: 0.9rem;
+    color: #888;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.docente-stats {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-dark);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.badge-reservas {
+    background: rgba(250, 30, 78, 0.1);
+    color: var(--accent-prof);
+    border: 1px solid var(--accent-prof);
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.light-theme .badge-reservas {
+    background: rgba(230, 0, 51, 0.05);
+}
+
+@media (max-width: 768px) {
+    .docentes-grid {
+        grid-template-columns: 1fr;
+    }
+}

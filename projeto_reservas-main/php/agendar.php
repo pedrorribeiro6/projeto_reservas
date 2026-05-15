@@ -43,7 +43,24 @@ proteger_pagina('professor');
                     <div class="input-box">
                         <label>DATA DA AULA</label>
                         <input type="date" id="data_reserva" name="data_reserva" required>
+                        <span id="aviso-fds" style="display:none; color:#ff4d4d; font-size:0.78rem; font-weight:700; margin-top:4px; letter-spacing:0.05em;">
+                            ⛔ FINAIS DE SEMANA NÃO SÃO PERMITIDOS
+                        </span>
                     </div>
+                    <script>
+                        document.getElementById('data_reserva').addEventListener('change', function () {
+                            const aviso = document.getElementById('aviso-fds');
+                            if (!this.value) { aviso.style.display = 'none'; return; }
+                            const dia = new Date(this.value + 'T12:00:00').getDay();
+                            if (dia === 0 || dia === 6) {
+                                aviso.style.display = 'block';
+                                this.style.borderColor = '#ff4d4d';
+                            } else {
+                                aviso.style.display = 'none';
+                                this.style.borderColor = '';
+                            }
+                        });
+                    </script>
                     <div class="input-box">
                         <label>HORÁRIO INÍCIO</label>
                         <input type="time" id="horario_inicio" name="horario_inicio" required>

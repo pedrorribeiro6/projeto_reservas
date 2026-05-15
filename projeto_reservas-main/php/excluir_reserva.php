@@ -1,10 +1,18 @@
 <?php
+ob_start(); // Captura qualquer saída indesejada (notices, warnings) antes do JSON
 session_start();
 require 'conexao.php';
 require 'auth.php';
 proteger_pagina('professor'); // Somente professor ou admin podem acessar
 
 header('Content-Type: application/json');
+
+// Função auxiliar: limpa o buffer e emite JSON puro
+function responder(array $dados): void {
+    ob_clean();
+    echo json_encode($dados);
+    exit();
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = (int)($_POST['id'] ?? 0);
@@ -22,15 +30,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             if ($stmt->rowCount() > 0) {
-                echo json_encode(['sucesso' => true]);
+                responder(['sucesso' => true]);
             } else {
-                echo json_encode(['sucesso' => false, 'erro' => 'A reserva não foi encontrada ou você não tem permissão para excluí-la.']);
+                responder(['sucesso' => false, 'erro' => 'A reserva não foi encontrada ou você não tem permissão para excluí-la.']);
             }
         } catch (PDOException $e) {
-            echo json_encode(['sucesso' => false, 'erro' => 'Erro interno no banco de dados.']);
+            responder(['sucesso' => false, 'erro' => 'Erro interno no banco de dados.']);
         }
     } else {
-        echo json_encode(['sucesso' => false, 'erro' => 'ID de reserva inválido.']);
+        responder(['sucesso' => false, 'erro' => 'ID de reserva inválido.']);
     }
 }
 ?>
