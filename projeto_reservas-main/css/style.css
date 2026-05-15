@@ -1,0 +1,481 @@
+/* Gamer / Neo-Brutalist CSS (Opera GX Inspired) */
+:root {
+    --bg-color: #0A0A0C;
+    --text-color: #E2E2E2;
+    --accent-red: #FA1E4E;
+    --accent-cyan: #00F0FF;
+    --border-dark: #1E1E24;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Rajdhani', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    overflow-x: hidden;
+    background-image:
+        linear-gradient(rgba(250, 30, 78, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(250, 30, 78, 0.03) 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+.selection-wrapper {
+    max-width: 1000px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    position: relative;
+    z-index: 10;
+}
+
+.hero-header {
+    text-align: center;
+    position: relative;
+}
+
+.massive-title {
+    font-size: clamp(4rem, 8vw, 6rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0px var(--accent-red);
+    text-align: center;
+}
+
+.dot {
+    color: var(--accent-cyan);
+}
+
+.glitch-line {
+    width: 100px;
+    height: 4px;
+    background: var(--accent-red);
+    margin: 1rem auto;
+    box-shadow: 4px 4px 0 var(--accent-cyan);
+}
+
+.subtitle {
+    font-size: 1.25rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #888;
+}
+
+.role-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .role-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+    }
+}
+
+.role-card {
+    text-decoration: none;
+    color: var(--text-color);
+    background: #0F0F13;
+    border: 2px solid var(--border-dark);
+    padding: 3rem 2rem;
+    position: relative;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 300px;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.card-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(45deg,
+            transparent,
+            transparent 10px,
+            rgba(255, 255, 255, 0.02) 10px,
+            rgba(255, 255, 255, 0.02) 20px);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.role-card:hover .card-bg {
+    opacity: 1;
+}
+
+.card-professor {
+    border-color: var(--accent-cyan);
+    box-shadow: -8px 8px 0 rgba(0, 240, 255, 0.2);
+}
+
+.card-admin {
+    border-color: var(--accent-red);
+    box-shadow: 8px 8px 0 rgba(250, 30, 78, 0.2);
+}
+
+.role-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-professor:hover {
+    box-shadow: -12px 12px 0 var(--accent-cyan);
+}
+
+.card-admin:hover {
+    box-shadow: 12px 12px 0 var(--accent-red);
+}
+
+.role-id {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #666;
+    margin-bottom: 2rem;
+    display: inline-block;
+    border: 1px solid #333;
+    padding: 0.2rem 0.5rem;
+}
+
+.card-professor .role-id {
+    color: var(--accent-cyan);
+    border-color: rgba(0, 240, 255, 0.3);
+}
+
+.card-admin .role-id {
+    color: var(--accent-red);
+    border-color: rgba(250, 30, 78, 0.3);
+}
+
+.role-card h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.role-card p {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: #AAA;
+}
+
+.icon-arrow {
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.card-professor .icon-arrow {
+    color: var(--accent-cyan);
+}
+
+.card-admin .icon-arrow {
+    color: var(--accent-red);
+}
+
+.role-card:hover .icon-arrow {
+    transform: translateX(10px);
+}
+
+/* Glitch effect on hover for titles */
+.role-card:hover h2 {
+    text-shadow: 2px 0 var(--accent-cyan), -2px 0 var(--accent-red);
+}
+
+/* Light Theme Configuration */
+:root.light-theme {
+    --bg-color: #F4F4F4;
+    --text-color: #0F0F13;
+    --accent-red: #E60033;
+    --accent-cyan: #00A6CC;
+    --border-dark: #D0D0D0;
+}
+
+body.light-theme {
+    background-image:
+        linear-gradient(rgba(230, 0, 51, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(230, 0, 51, 0.05) 1px, transparent 1px);
+}
+
+.light-theme .role-card {
+    background: #FFFFFF;
+}
+
+/* Theme Toggle Button */
+.theme-btn {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: var(--bg-color);
+    border: 2px solid var(--border-dark);
+    color: var(--text-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    width: 3.5rem;
+    height: 3.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    transition: all 0.2s ease-in-out;
+}
+
+.theme-btn:hover {
+    box-shadow: 4px 4px 0 var(--accent-cyan);
+    transform: translate(-4px, -4px);
+}
+
+/* --- Action Bar (Index) --- */
+.action-bar {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    position: relative;
+    z-index: 10;
+}
+
+.btn-create-account {
+    text-decoration: none;
+    color: var(--text-color);
+    background: var(--bg-color);
+    border: 2px solid var(--border-dark);
+    padding: 1rem 3rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    position: relative;
+    transition: all 0.2s ease;
+    box-shadow: 6px 6px 0 var(--border-dark);
+    overflow: hidden;
+}
+
+.btn-create-account::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: var(--text-color);
+    z-index: -1;
+    transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.btn-create-account:hover {
+    color: var(--bg-color);
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0 var(--accent-cyan);
+    border-color: var(--text-color);
+}
+
+.btn-create-account:hover::before {
+    width: 100%;
+}
+
+.light-theme .btn-create-account {
+    background: #FFF;
+}
+
+.light-theme .btn-create-account:hover {
+    color: #FFF;
+}
+
+.light-theme .btn-create-account::before {
+    background: var(--text-color);
+}
+
+/* --- Brutalist Form (Criacao de Conta) --- */
+.form-wrapper {
+    max-width: 600px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    position: relative;
+    z-index: 10;
+}
+
+.form-header {
+    text-align: left;
+    border-bottom: 4px solid var(--border-dark);
+    padding-bottom: 1rem;
+}
+
+.form-header .massive-title {
+    font-size: clamp(3rem, 6vw, 5rem);
+}
+
+.brutalist-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    background: #0F0F13;
+    border: 2px solid var(--border-dark);
+    padding: 3rem;
+    box-shadow: 8px 8px 0 var(--accent-red);
+}
+
+.light-theme .brutalist-form {
+    background: #FFF;
+    box-shadow: 8px 8px 0 var(--accent-red);
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    letter-spacing: 0.05em;
+}
+
+.input-group input,
+.input-group select {
+    background: transparent;
+    border: 2px solid var(--border-dark);
+    color: var(--text-color);
+    padding: 1rem;
+    font-size: 1.25rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    border-color: var(--accent-cyan);
+    box-shadow: 4px 4px 0 rgba(0, 240, 255, 0.2);
+}
+
+.select-wrapper {
+    position: relative;
+}
+
+.select-wrapper::after {
+    content: '▼';
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-color);
+    pointer-events: none;
+}
+
+.input-group select {
+    width: 100%;
+    appearance: none;
+    cursor: pointer;
+}
+
+.input-group select option {
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+@media (max-width: 600px) {
+    .form-actions {
+        flex-direction: column;
+    }
+}
+
+.btn-submit,
+.btn-back {
+    flex: 1;
+    padding: 1rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-family: 'Rajdhani', sans-serif;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    border: 2px solid var(--border-dark);
+    transition: all 0.2s ease;
+}
+
+.btn-submit {
+    background: var(--accent-red);
+    color: #FFF;
+    border-color: var(--accent-red);
+}
+
+.btn-submit:hover {
+    box-shadow: -6px 6px 0 var(--accent-cyan);
+    transform: translate(2px, -2px);
+}
+
+.btn-back {
+    background: transparent;
+    color: var(--text-color);
+}
+
+.btn-back:hover {
+    background: var(--text-color);
+    color: var(--bg-color);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--border-dark);
+}
+
+/* --- Top Left Back Button --- */
+.btn-top-left {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    text-decoration: none;
+    color: var(--text-color);
+    background: var(--bg-color);
+    border: 2px solid var(--border-dark);
+    padding: 0.5rem 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-family: 'Rajdhani', sans-serif;
+    text-transform: uppercase;
+    z-index: 100;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 4px 4px 0 var(--border-dark);
+}
+
+.btn-top-left:hover {
+    box-shadow: 6px 6px 0 var(--accent-cyan);
+    transform: translate(-2px, -2px);
+    color: var(--text-color);
+}

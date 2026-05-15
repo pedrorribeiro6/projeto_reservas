@@ -1,0 +1,160 @@
+/* Gamer / Neo-Brutalist CSS specifically for the Booking Form */
+
+.brutalist-booking-form {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    background: #0F0F13;
+    border: 2px solid var(--border-dark);
+    padding: 3rem;
+    box-shadow: 8px 8px 0 var(--border-dark);
+    transition: background 0.3s ease;
+}
+
+.light-theme .brutalist-booking-form {
+    background: #FFFFFF;
+}
+
+.form-section h2 {
+    color: var(--accent-prof);
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border-dark);
+    padding-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.grid-inputs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.input-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-box label {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.input-box input {
+    background: transparent;
+    border: 2px solid var(--border-dark);
+    color: var(--text-color);
+    padding: 1rem;
+    font-size: 1.2rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+/* Forcing color-scheme so date/time pickers adapt to dark theme natively */
+input[type="date"], input[type="time"] {
+    color-scheme: dark;
+}
+
+.light-theme input[type="date"], .light-theme input[type="time"] {
+    color-scheme: light;
+}
+
+.input-box input:focus, .equip-card input:focus {
+    border-color: var(--accent-prof);
+    box-shadow: 4px 4px 0 rgba(0, 240, 255, 0.2);
+}
+
+.light-theme .input-box input:focus, .light-theme .equip-card input:focus {
+    box-shadow: 4px 4px 0 rgba(0, 166, 204, 0.2);
+}
+
+.grid-equipamentos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.equip-card {
+    border: 2px solid var(--border-dark);
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.equip-card:hover {
+    border-color: var(--accent-prof);
+}
+
+.equip-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+.limit-badge {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    background: var(--accent-red);
+    color: #FFF;
+    padding: 0.5rem 1rem;
+    font-weight: 700;
+    font-size: 1rem;
+    border: 2px solid var(--bg-color);
+    box-shadow: 4px 4px 0 var(--border-dark);
+}
+
+.light-theme .limit-badge {
+    border-color: #FFF;
+}
+
+.equip-card input {
+    width: 100%;
+    background: transparent;
+    border: 2px solid var(--border-dark);
+    color: var(--text-color);
+    padding: 1rem;
+    font-size: 2rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+}
+
+.btn-submit-booking {
+    width: 100%;
+    padding: 1.5rem;
+    font-size: 1.8rem;
+    margin-top: 1rem;
+    cursor: pointer;
+}
+
+.feedback-msg {
+    padding: 1rem;
+    border: 2px solid;
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.feedback-msg.hidden {
+    display: none;
+}
+
+.feedback-msg.error {
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+    background: rgba(250, 30, 78, 0.1);
+}
+
+.feedback-msg.success {
+    border-color: #00FF66;
+    color: #00FF66;
+    background: rgba(0, 255, 102, 0.1);
+}

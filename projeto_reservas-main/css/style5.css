@@ -1,0 +1,121 @@
+/* Gamer / Neo-Brutalist CSS specifically for Bookings List */
+
+.bookings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.booking-card {
+    background: #0F0F13;
+    border: 2px solid var(--border-dark);
+    box-shadow: 6px 6px 0 var(--border-dark);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease;
+}
+
+.light-theme .booking-card {
+    background: #FFFFFF;
+}
+
+.booking-card:hover {
+    border-color: var(--accent-prof);
+    box-shadow: 6px 6px 0 var(--accent-prof);
+    transform: translate(-2px, -2px);
+}
+
+.booking-header {
+    background: var(--border-dark);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--border-dark);
+}
+
+.light-theme .booking-header {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.booking-date {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-prof);
+    letter-spacing: 0.05em;
+}
+
+.booking-time {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    background: var(--bg-color);
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--border-dark);
+}
+
+.booking-body {
+    padding: 2rem 1.5rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.equip-tag {
+    background: var(--bg-color);
+    border: 2px solid var(--border-dark);
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+    color: var(--text-color);
+    box-shadow: 3px 3px 0 var(--border-dark);
+}
+
+.equip-tag strong {
+    color: var(--accent-prof);
+}
+
+.booking-footer {
+    padding: 1rem 1.5rem;
+    border-top: 2px solid var(--border-dark);
+    font-size: 1rem;
+    color: #888;
+    text-align: right;
+    font-weight: 500;
+}
+
+.btn-delete {
+    background: transparent;
+    color: var(--accent-red);
+    border: 1px solid var(--accent-red);
+    padding: 0.3rem 0.8rem;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.btn-delete:hover {
+    background: var(--accent-red);
+    color: #FFF;
+    box-shadow: 4px 4px 0 var(--accent-red);
+    transform: translate(-2px, -2px);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    border: 2px dashed var(--border-dark);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.empty-state h2 {
+    color: var(--accent-red);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    font-size: 1.2rem;
+    color: #888;
+}

@@ -1,0 +1,353 @@
+/* Gamer / Neo-Brutalist CSS for Professor Login */
+:root {
+    --bg-color: #0A0A0C;
+    --text-color: #E2E2E2;
+    --accent-prof: #00F0FF; /* Cyan focus for Professor */
+    --accent-red: #FA1E4E;
+    --border-dark: #1E1E24;
+}
+
+:root.light-theme {
+    --bg-color: #F4F4F4;
+    --text-color: #0F0F13;
+    --accent-prof: #00A6CC;
+    --accent-red: #E60033;
+    --border-dark: #D0D0D0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Rajdhani', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    overflow-x: hidden;
+    background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+body.light-theme {
+    background-image: 
+        linear-gradient(rgba(0, 166, 204, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 166, 204, 0.05) 1px, transparent 1px);
+}
+
+/* Theme Toggle Button */
+.theme-btn {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: var(--bg-color);
+    border: 2px solid var(--border-dark);
+    color: var(--text-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    width: 3.5rem;
+    height: 3.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    transition: all 0.2s ease-in-out;
+}
+
+.theme-btn:hover {
+    box-shadow: 4px 4px 0 var(--accent-prof);
+    transform: translate(-4px, -4px);
+}
+
+/* --- Top Left Back Button --- */
+.btn-top-left {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    text-decoration: none;
+    color: var(--text-color);
+    background: var(--bg-color);
+    border: 2px solid var(--border-dark);
+    padding: 0.5rem 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-family: 'Rajdhani', sans-serif;
+    text-transform: uppercase;
+    z-index: 100;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 4px 4px 0 var(--border-dark);
+}
+
+.btn-top-left:hover {
+    box-shadow: 6px 6px 0 var(--accent-prof);
+    transform: translate(-2px, -2px);
+    color: var(--text-color);
+}
+
+/* --- Login Form Wrapper --- */
+.login-wrapper {
+    max-width: 500px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    position: relative;
+    z-index: 10;
+}
+
+.login-header {
+    text-align: center;
+    position: relative;
+}
+
+.massive-title {
+    font-size: clamp(4rem, 8vw, 6rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0px var(--accent-prof);
+}
+
+.dot-prof {
+    color: var(--accent-prof);
+}
+
+.subtitle {
+    font-size: 1.25rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #888;
+    margin-top: 0.5rem;
+}
+
+.glitch-line-prof {
+    width: 100px;
+    height: 4px;
+    background: var(--accent-prof);
+    margin: 1.5rem auto 0;
+    box-shadow: 4px 4px 0 var(--border-dark);
+}
+
+.brutalist-login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    background: #0F0F13;
+    border: 2px solid var(--border-dark);
+    padding: 3rem;
+    box-shadow: 8px 8px 0 var(--accent-prof);
+    transition: background 0.3s ease;
+}
+
+.light-theme .brutalist-login-form {
+    background: #FFFFFF;
+}
+
+.input-group-prof {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group-prof label {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--accent-prof);
+    letter-spacing: 0.05em;
+}
+
+.input-group-prof input {
+    background: transparent;
+    border: 2px solid var(--border-dark);
+    color: var(--text-color);
+    padding: 1rem;
+    font-size: 1.25rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.input-group-prof input:focus {
+    border-color: var(--accent-prof);
+    box-shadow: 4px 4px 0 rgba(0, 240, 255, 0.2);
+}
+
+.light-theme .input-group-prof input:focus {
+    box-shadow: 4px 4px 0 rgba(0, 166, 204, 0.2);
+}
+
+.form-actions-prof {
+    display: flex;
+    margin-top: 1rem;
+}
+
+.btn-submit-prof {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-family: 'Rajdhani', sans-serif;
+    cursor: pointer;
+    text-align: center;
+    background: var(--accent-prof);
+    color: var(--bg-color);
+    border: 2px solid var(--accent-prof);
+    transition: all 0.2s ease;
+}
+
+.btn-submit-prof:hover {
+    box-shadow: -6px 6px 0 var(--border-dark);
+    transform: translate(2px, -2px);
+    background: transparent;
+    color: var(--text-color);
+}
+
+.form-footer-prof {
+    text-align: center;
+    margin-top: -0.5rem;
+}
+
+.form-footer-prof a {
+    color: #888;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.form-footer-prof a:hover {
+    color: var(--accent-prof);
+    text-decoration: underline;
+}
+
+/* --- Admin Login Specifics --- */
+.massive-title-adm {
+    font-size: clamp(4rem, 8vw, 6rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0px var(--accent-red);
+}
+
+.dot-adm {
+    color: var(--accent-red);
+}
+
+.glitch-line-adm {
+    width: 100px;
+    height: 4px;
+    background: var(--accent-red);
+    margin: 1.5rem auto 0;
+    box-shadow: 4px 4px 0 var(--border-dark);
+}
+
+.brutalist-login-form-adm {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    background: #0F0F13;
+    border: 2px solid var(--border-dark);
+    padding: 3rem;
+    box-shadow: 8px 8px 0 var(--accent-red);
+    transition: background 0.3s ease;
+}
+
+.light-theme .brutalist-login-form-adm {
+    background: #FFFFFF;
+}
+
+.input-group-adm {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group-adm label {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--accent-red);
+    letter-spacing: 0.05em;
+}
+
+.input-group-adm input {
+    background: transparent;
+    border: 2px solid var(--border-dark);
+    color: var(--text-color);
+    padding: 1rem;
+    font-size: 1.25rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.input-group-adm input:focus {
+    border-color: var(--accent-red);
+    box-shadow: 4px 4px 0 rgba(250, 30, 78, 0.2);
+}
+
+.light-theme .input-group-adm input:focus {
+    box-shadow: 4px 4px 0 rgba(230, 0, 51, 0.2);
+}
+
+.form-actions-adm {
+    display: flex;
+    margin-top: 1rem;
+}
+
+.btn-submit-adm {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-family: 'Rajdhani', sans-serif;
+    cursor: pointer;
+    text-align: center;
+    background: var(--accent-red);
+    color: #FFF;
+    border: 2px solid var(--accent-red);
+    transition: all 0.2s ease;
+}
+
+.btn-submit-adm:hover {
+    box-shadow: -6px 6px 0 var(--border-dark);
+    transform: translate(2px, -2px);
+    background: transparent;
+    color: var(--text-color);
+}
+
+.form-footer-adm {
+    text-align: center;
+    margin-top: -0.5rem;
+}
+
+.form-footer-adm a {
+    color: #888;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.form-footer-adm a:hover {
+    color: var(--accent-red);
+    text-decoration: underline;
+}

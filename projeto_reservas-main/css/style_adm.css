@@ -1,0 +1,12 @@
+:root {
+    /* 
+       Sobrescreve a cor ciano do professor pela cor vermelha neo-brutalista 
+       Isso altera todos os acentos dos botões, borders, glitches, tags automaticamente
+    */
+    --accent-prof: #FA1E4E; 
+}
+
+/* Ajustes específicos adicionais (se houver necessidade) */
+.stat-card h2 {
+    color: var(--accent-prof);
+}
