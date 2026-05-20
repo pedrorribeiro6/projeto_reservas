@@ -1,10 +1,18 @@
 <?php
+// Configuração do Fuso Horário (Crucial para a InfinityFree e horários de reservas)
+date_default_timezone_set('America/Sao_Paulo');
+
 // Configurações do Banco de Dados
+// ATENÇÃO PARA PUBLICAR NA INFINITYFREE:
+// 1. Altere o $host para o fornecido pela hospedagem (ex: sql123.infinityfree.com)
+// 2. Altere o $dbname para o nome do banco criado lá (ex: epiz_12345678_projeto_reservas)
+// 3. Altere o $user para o nome de usuário fornecido (ex: epiz_12345678)
+// 4. Altere o $pass para a senha do seu painel
 $host = 'localhost';
-$port = '3307';
 $dbname = 'projeto_reservas';
 $user = 'root';
 $pass = ''; // XAMPP normalmente usa senha vazia
+$port = '3307'; // A InfinityFree não exige a porta, pode apagar essa linha quando publicar
 
 try {
     $pdo = new PDO(

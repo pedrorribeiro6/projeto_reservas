@@ -1,0 +1,41 @@
+name: Deploy to InfinityFree
+
+on:
+  push:
+    branches:
+      - main
+      - master # Cobre ambas as nomenclaturas comuns de branch principal
+
+jobs:
+  deploy:
+    name: 🎉 Deploy via FTP
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Checkout do código
+      uses: actions/checkout@v4
+    
+    - name: 🔧 Injetar Credenciais de Produção (InfinityFree)
+      # Aqui o GitHub Actions substitui os valores locais do XAMPP pelos Repository Secrets antes de subir o arquivo
+      run: |
+        sed -i "s/\$host = 'localhost';/\$host = '${{ secrets.DB_HOST }}';/" php/conexao.php
+        sed -i "s/\$dbname = 'projeto_reservas';/\$dbname = '${{ secrets.DB_NAME }}';/" php/conexao.php
+        sed -i "s/\$user = 'root';/\$user = '${{ secrets.DB_USER }}';/" php/conexao.php
+        sed -i "s/\$pass = '';/\$pass = '${{ secrets.DB_PASS }}';/" php/conexao.php
+        sed -i "s/\$port = '3307';/\$port = '3306';/" php/conexao.php
+        
+    - name: 📂 Upload de arquivos via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        # Subimos todo o conteúdo do repositório para a pasta pública
+        local-dir: ./
+        server-dir: htdocs/
+        # Impedimos que o arquivo do banco de dados e arquivos de versão subam para o servidor web
+        exclude: |
+          **/.git*
+          **/.git*/**
+          .github/**
+          database.sql
+          README.md

@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style2.css">
     <script src="../js/script.js" defer></script>
+    <script src="../js/login.js" defer></script>
     <link rel="icon" href="../imagens/sys_logo.png" type="image/png">
 </head>
 <body>

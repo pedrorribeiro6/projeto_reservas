@@ -2,18 +2,12 @@
 session_start();
 require 'conexao.php';
 
-// Mock de usuário professor para facilitar os testes se não existir
-try {
-    $checkProf = $pdo->query("SELECT id FROM usuarios WHERE email = 'prof@teste.com'")->fetch();
-    if (!$checkProf) {
-        $hash = password_hash('prof123', PASSWORD_BCRYPT);
-        $pdo->query("INSERT INTO usuarios (nome, email, senha, tipo_conta) VALUES ('Professor Teste', 'prof@teste.com', '$hash', 'professor')");
-    }
-} catch (Exception $e) {}
+// O usuário Professor Teste foi removido permanentemente.
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $credencial = $_POST['credencial'] ?? '';
     $senha = $_POST['senha'] ?? '';
+    $is_ajax = isset($_POST['ajax']) && $_POST['ajax'] === 'true';
     
     // Busca usuário pelo e-mail
     $stmt = $pdo->prepare("SELECT id, nome, email, senha, tipo_conta FROM usuarios WHERE email = :email LIMIT 1");
@@ -26,17 +20,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['usuario_nome'] = $usuario['nome'];
         $_SESSION['tipo_conta'] = $usuario['tipo_conta'];
 
-        // Redirecionamento por Papel (Role)
-        if ($usuario['tipo_conta'] === 'professor') {
-            header("Location: dashboard_prof.php");
+        // Define a rota de redirecionamento por Papel (Role)
+        $redirect = ($usuario['tipo_conta'] === 'professor') ? "dashboard_prof.php" : "dashboard_adm.php";
+        
+        if ($is_ajax) {
+            echo json_encode(['sucesso' => true, 'redirect' => $redirect]);
         } else {
-            // Se for admin
-            header("Location: dashboard_adm.php");
+            header("Location: " . $redirect);
         }
         exit();
     } else {
-        // Falha
-        echo "<script>alert('Credenciais inválidas! (Dica: use prof@teste.com / prof123)'); window.history.back();</script>";
+        // Falha na autenticação
+        $mensagem_erro = "Usuário ou senha incorreta. Tente Novamente";
+        
+        if ($is_ajax) {
+            echo json_encode(['sucesso' => false, 'erro' => $mensagem_erro]);
+        } else {
+            echo "<script>alert('$mensagem_erro'); window.history.back();</script>";
+        }
         exit();
     }
 } else {
