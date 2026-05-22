@@ -47,6 +47,9 @@ try {
             ('Celulares', 12)");
     }
 
+    // Executa a limpeza automática silenciosa de reservas expiradas
+    require_once __DIR__ . '/auto_cleanup.php';
+
 } catch (PDOException $e) {
     die("Erro na conexão com o banco de dados: " . $e->getMessage());
 }

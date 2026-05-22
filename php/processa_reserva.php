@@ -21,6 +21,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $horario_fim = $_POST['horario_fim'] ?? '';
     $quantidades = $_POST['quantidade'] ?? []; // Array [id_equipamento => quantidade]
 
+    // Validação de Datas e Horários Passados (Fuso Horário America/Sao_Paulo)
+    $timezone = new DateTimeZone('America/Sao_Paulo');
+    $agora = new DateTime('now', $timezone);
+    $data_atual = $agora->format('Y-m-d');
+    $horario_atual = $agora->format('H:i');
+
+    $h_reserva_inicio = date('H:i', strtotime($horario_inicio));
+
+    if ($data_reserva < $data_atual || ($data_reserva === $data_atual && $h_reserva_inicio < $horario_atual)) {
+        responder(['sucesso' => false, 'erro' => 'Horários já passados não estão disponíveis.']);
+    }
+
     // Validação de Fim de Semana
     $dia_semana = (int)date('w', strtotime($data_reserva));
     if ($dia_semana === 0 || $dia_semana === 6) {

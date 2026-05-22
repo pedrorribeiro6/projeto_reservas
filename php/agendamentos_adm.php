@@ -29,6 +29,7 @@ $agendamentos = $stmt->fetchAll();
     <script src="../js/script.js" defer></script>
     <script src="../js/funcionalidade.js?v=<?= time() ?>" defer></script>
     <script src="../js/filtro_adm.js?v=<?= time() ?>" defer></script>
+    <script src="../js/auto_cleanup.js?v=<?= time() ?>" defer></script>
     <link rel="icon" href="../imagens/sys_logo.png" type="image/png">
 </head>
 <body>
