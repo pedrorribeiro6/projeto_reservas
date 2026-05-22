@@ -67,14 +67,24 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'M6', label: '6ª Aula (11:30 - 12:20)', inicio: '11:30', fim1: '12:20', fim2: '', canDouble: false }
     ];
 
+    // Grade do Ensino Médio (Tarde) - Aulas com duração variada e intervalo 15:10-15:30
+    const slotsMedioTarde = [
+        { id: 'MT1', label: '1ª Aula (12:40 - 13:30)', inicio: '12:40', fim1: '13:30', fim2: '14:40', canDouble: true },
+        { id: 'MT2', label: '2ª Aula (13:30 - 14:40)', inicio: '13:30', fim1: '14:40', fim2: '15:10', canDouble: true },
+        { id: 'MT3', label: '3ª Aula (14:40 - 15:10)', inicio: '14:40', fim1: '15:10', fim2: '', canDouble: false }, // Intervalo a seguir (15:10 - 15:30)
+        { id: 'MT4', label: '4ª Aula (15:30 - 16:20)', inicio: '15:30', fim1: '16:20', fim2: '17:10', canDouble: true },
+        { id: 'MT5', label: '5ª Aula (16:20 - 17:10)', inicio: '16:20', fim1: '17:10', fim2: '18:00', canDouble: true },
+        { id: 'MT6', label: '6ª Aula (17:10 - 18:00)', inicio: '17:10', fim1: '18:00', fim2: '', canDouble: false }
+    ];
+
     // Função utilitária para resolver os slots baseados no segmento e na turma
     function obterSlots(segmento, turma) {
+        const turmaInfo = turmasCarregadas.find(t => t.nome === turma);
+        const isManha = turmaInfo ? (turmaInfo.periodo === 'manha') : true;
         if (segmento === 'fundamental') {
-            const turmaInfo = turmasCarregadas.find(t => t.nome === turma);
-            const isManha = turmaInfo ? (turmaInfo.periodo === 'manha') : true;
             return isManha ? slotsFundamentalManha : slotsFundamentalTarde;
         } else if (segmento === 'medio') {
-            return slotsMedio;
+            return isManha ? slotsMedio : slotsMedioTarde;
         }
         return [];
     }
@@ -364,6 +374,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (result.sucesso) {
+                // Salva os valores antes de resetar o formulário
+                const serieSelecionada = anoTurmaSelect.value;
+                const disciplinaSelecionada = disciplinaSelect.value;
+                const horaFimSelecionada = hFimInput.value;
+
                 form.reset();
                 
                 // Reseta os estados dos selects para padrão
@@ -382,10 +397,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     : '';
                 
                 modalDetalhe.innerHTML = `
-                    <strong>Série:</strong> ${anoTurmaSelect.value || ''}<br>
-                    <strong>Disciplina:</strong> ${disciplinaSelect.value || ''}<br>
+                    <strong>Série:</strong> ${serieSelecionada || ''}<br>
+                    <strong>Disciplina:</strong> ${disciplinaSelecionada || ''}<br>
                     <strong>Data:</strong> ${dataFormatada}<br>
-                    <strong>Período:</strong> ${horaInicioStr} às ${hFimInput.value}
+                    <strong>Período:</strong> ${horaInicioStr} às ${horaFimSelecionada}
                 `;
                 
                 modal.style.display = 'flex';

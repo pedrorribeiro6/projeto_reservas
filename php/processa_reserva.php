@@ -61,26 +61,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $ini = strtotime($h_ini);
         $fim = strtotime($h_fim);
 
-        if ($seg === 'fundamental') {
-            // Se for Fundamental II, verifica se é turma da manhã na tabela do banco
-            $stmt_periodo = $pdo->prepare("SELECT periodo FROM turmas WHERE nome = ? LIMIT 1");
-            $stmt_periodo->execute([$turma]);
-            $periodo = $stmt_periodo->fetchColumn();
-            
-            $isManha = ($periodo === 'manha');
-            if ($isManha) {
-                $intervalos = [
-                    ['10:20', '10:40']
-                ];
-            } else {
-                $intervalos = [
-                    ['15:10', '15:30']
-                ];
-            }
-        } else {
-            // Ensino Médio (todos são manhã por padrão)
+        // Busca o período da turma no banco de dados para qualquer segmento
+        $stmt_periodo = $pdo->prepare("SELECT periodo FROM turmas WHERE nome = ? LIMIT 1");
+        $stmt_periodo->execute([$turma]);
+        $periodo = $stmt_periodo->fetchColumn();
+        
+        $isManha = ($periodo === 'manha');
+        if ($isManha) {
             $intervalos = [
                 ['10:20', '10:40']
+            ];
+        } else {
+            $intervalos = [
+                ['15:10', '15:30']
             ];
         }
 
