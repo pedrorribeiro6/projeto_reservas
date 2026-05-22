@@ -40,6 +40,7 @@ $agendamentos = $stmt->fetchAll();
             <li><a href="agendamentos_adm.php" class="active">TODAS AS RESERVAS</a></li>
             <li><a href="docentes.php">CORPO DOCENTE</a></li>
             <li><a href="dispositivos.php">DISPOSITIVOS</a></li>
+            <li><a href="turmas.php">TURMAS</a></li>
             <li><a href="logout.php" class="btn-logout">SAIR</a></li>
             <li><button id="theme-toggle" class="nav-theme-btn" aria-label="Alternar Tema">🌞</button></li>
         </ul>
@@ -75,7 +76,14 @@ $agendamentos = $stmt->fetchAll();
                             <span class="booking-time"><?= date('H:i', strtotime($ag['horario_inicio'])) ?> - <?= date('H:i', strtotime($ag['horario_fim'])) ?></span>
                         </div>
                         
-                        <div style="padding: 1rem 1.5rem; background: rgba(0,0,0,0.2); border-bottom: 2px solid var(--border-dark); border-top: 2px solid var(--border-dark);">
+                        <?php if (!empty($ag['segmento']) || !empty($ag['ano_turma']) || !empty($ag['disciplina'])): ?>
+                            <div style="padding: 0.6rem 1.5rem; background: rgba(255, 255, 255, 0.04); border-bottom: 2px solid var(--border-dark); font-size: 0.95rem; font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: flex; gap: 1rem; flex-wrap: wrap;">
+                                <span>🏫 <span style="color: var(--accent-prof);"><?= htmlspecialchars($ag['ano_turma']) ?></span> (<?= $ag['segmento'] === 'fundamental' ? 'Fund. II' : 'Médio' ?>)</span>
+                                <span>📚 DISCIPLINA: <span style="color: var(--accent-prof);"><?= htmlspecialchars($ag['disciplina']) ?></span></span>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <div style="padding: 1rem 1.5rem; background: rgba(0,0,0,0.2); border-bottom: 2px solid var(--border-dark); border-top: <?= !empty($ag['segmento']) ? 'none' : '2px solid var(--border-dark)' ?>;">
                             <span style="color: #888; font-weight: bold; font-size:1.1rem;">DOCENTE:</span> 
                             <span style="font-size: 1.4rem; font-weight: 700; margin-left: 0.5rem; color: var(--text-color);"><?= htmlspecialchars($ag['professor_nome']) ?></span>
                         </div>

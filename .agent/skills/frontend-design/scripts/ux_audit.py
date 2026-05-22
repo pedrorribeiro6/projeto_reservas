@@ -112,13 +112,14 @@ class UXAuditor:
         filename = os.path.basename(filepath)
 
         # Pre-calculate common flags
-        has_long_text = bool(re.search(r'<p|<div.*class=.*text|article|<span.*text', content, re.IGNORECASE))
-        has_form = bool(re.search(r'<form|<input|password|credit|card|payment', content, re.IGNORECASE))
-        complex_elements = len(re.findall(r'<input|<select|<textarea|<option', content, re.IGNORECASE))
+        is_css = filepath.endswith('.css')
+        has_long_text = False if is_css else bool(re.search(r'<p|<div.*class=.*text|article|<span.*text', content, re.IGNORECASE))
+        has_form = False if is_css else bool(re.search(r'<form|<input|password|credit|card|payment', content, re.IGNORECASE))
+        complex_elements = 0 if is_css else len(re.findall(r'<input|<select|<textarea|<option', content, re.IGNORECASE))
 
         # --- 1. PSYCHOLOGY LAWS ---
         # Hick's Law
-        nav_items = len(re.findall(r'<NavLink|<Link|<a\s+href|nav-item', content, re.IGNORECASE))
+        nav_items = 0 if is_css else len(re.findall(r'<NavLink|<Link|<a\s+href|nav-item', content, re.IGNORECASE))
         if nav_items > 7:
             self.issues.append(f"[Hick's Law] {filename}: {nav_items} nav items (Max 7)")
         
@@ -127,12 +128,12 @@ class UXAuditor:
             self.warnings.append(f"[Fitts' Law] {filename}: Small targets (< 44px)")
         
         # Miller's Law
-        form_fields = len(re.findall(r'<input|<select|<textarea', content, re.IGNORECASE))
+        form_fields = 0 if is_css else len(re.findall(r'<input|<select|<textarea', content, re.IGNORECASE))
         if form_fields > 7 and not re.search(r'step|wizard|stage', content, re.IGNORECASE):
             self.warnings.append(f"[Miller's Law] {filename}: Complex form ({form_fields} fields)")
             
         # Von Restorff
-        if 'button' in content.lower() and not re.search(r'primary|bg-primary|Button.*primary|variant=["\']primary', content, re.IGNORECASE):
+        if not is_css and 'button' in content.lower() and not re.search(r'primary|bg-primary|Button.*primary|variant=["\']primary', content, re.IGNORECASE):
             self.warnings.append(f"[Von Restorff] {filename}: No primary CTA")
 
         # Serial Position Effect - Important items at beginning/end

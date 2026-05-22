@@ -324,9 +324,15 @@
     }
 
     .input-box input,
+    .input-box select,
     .equip-card input {
         font-size: 1rem;
-        padding: 0.8rem;
+        height: 50px;
+        padding: 0 0.8rem;
+    }
+
+    .input-box select {
+        padding-right: 2.5rem;
     }
 
     .role-card {

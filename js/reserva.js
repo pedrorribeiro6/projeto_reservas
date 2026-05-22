@@ -2,6 +2,83 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('formAgendamento');
     if (!form) return;
 
+    // Elementos de Controle do Formulário
+    const segmentoSelect = document.getElementById('segmento');
+    const anoTurmaSelect = document.getElementById('ano_turma');
+    const disciplinaSelect = document.getElementById('disciplina');
+    const aulaInicioSelect = document.getElementById('aula_inicio');
+    const duracaoSelect = document.getElementById('duracao_aulas');
+    const dataInput = document.getElementById('data_reserva');
+    const hInicioInput = document.getElementById('horario_inicio');
+    const hFimInput = document.getElementById('horario_fim');
+    let turmasCarregadas = [];
+
+    // ── Bloqueio de Data Mínima (hoje) e Aviso Visual de Fim de Semana ────
+    if (dataInput) {
+        const hoje = new Date();
+        const yyyy = hoje.getFullYear();
+        const mm = String(hoje.getMonth() + 1).padStart(2, '0');
+        const dd = String(hoje.getDate()).padStart(2, '0');
+        dataInput.setAttribute('min', `${yyyy}-${mm}-${dd}`);
+
+        dataInput.addEventListener('change', function () {
+            const aviso = document.getElementById('aviso-fds');
+            if (!this.value) { if (aviso) aviso.style.display = 'none'; return; }
+            const dia = new Date(this.value + 'T12:00:00').getDay();
+            if (dia === 0 || dia === 6) {
+                if (aviso) aviso.style.display = 'block';
+                this.style.borderColor = '#ff4d4d';
+            } else {
+                if (aviso) aviso.style.display = 'none';
+                this.style.borderColor = '';
+            }
+        });
+    }
+
+    // ── Definição dos Slots de Aulas e Regras de Negócio ─────────────────
+
+    // Grade do Ensino Fundamental II (Manhã) - Aulas de 50 minutos e intervalo 10:20-10:40
+    const slotsFundamentalManha = [
+        { id: 'FM1', label: '1ª Aula (07:00 - 07:50)', inicio: '07:00', fim1: '07:50', fim2: '08:40', canDouble: true },
+        { id: 'FM2', label: '2ª Aula (07:50 - 08:40)', inicio: '07:50', fim1: '08:40', fim2: '09:30', canDouble: true },
+        { id: 'FM3', label: '3ª Aula (08:40 - 09:30)', inicio: '08:40', fim1: '09:30', fim2: '10:20', canDouble: true },
+        { id: 'FM4', label: '4ª Aula (09:30 - 10:20)', inicio: '09:30', fim1: '10:20', fim2: '', canDouble: false }, // Intervalo a seguir (10:20 - 10:40)
+        { id: 'FM5', label: '5ª Aula (10:40 - 11:30)', inicio: '10:40', fim1: '11:30', fim2: '12:20', canDouble: true },
+        { id: 'FM6', label: '6ª Aula (11:30 - 12:20)', inicio: '11:30', fim1: '12:20', fim2: '', canDouble: false }
+    ];
+
+    // Grade do Ensino Fundamental II (Tarde) - Aulas com duração variada e intervalo 15:10-15:30
+    const slotsFundamentalTarde = [
+        { id: 'FT1', label: '1ª Aula (12:40 - 13:30)', inicio: '12:40', fim1: '13:30', fim2: '14:40', canDouble: true },
+        { id: 'FT2', label: '2ª Aula (13:30 - 14:40)', inicio: '13:30', fim1: '14:40', fim2: '15:10', canDouble: true },
+        { id: 'FT3', label: '3ª Aula (14:40 - 15:10)', inicio: '14:40', fim1: '15:10', fim2: '', canDouble: false }, // Intervalo a seguir (15:10 - 15:30)
+        { id: 'FT4', label: '4ª Aula (15:30 - 16:20)', inicio: '15:30', fim1: '16:20', fim2: '17:10', canDouble: true },
+        { id: 'FT5', label: '5ª Aula (16:20 - 17:10)', inicio: '16:20', fim1: '17:10', fim2: '18:00', canDouble: true },
+        { id: 'FT6', label: '6ª Aula (17:10 - 18:00)', inicio: '17:10', fim1: '18:00', fim2: '', canDouble: false }
+    ];
+
+    // Grade do Ensino Médio (Manhã) - Aulas de 50 minutos e intervalo 10:20-10:40
+    const slotsMedio = [
+        { id: 'M1', label: '1ª Aula (07:00 - 07:50)', inicio: '07:00', fim1: '07:50', fim2: '08:40', canDouble: true },
+        { id: 'M2', label: '2ª Aula (07:50 - 08:40)', inicio: '07:50', fim1: '08:40', fim2: '09:30', canDouble: true },
+        { id: 'M3', label: '3ª Aula (08:40 - 09:30)', inicio: '08:40', fim1: '09:30', fim2: '10:20', canDouble: true },
+        { id: 'M4', label: '4ª Aula (09:30 - 10:20)', inicio: '09:30', fim1: '10:20', fim2: '', canDouble: false }, // Intervalo a seguir (10:20 - 10:40)
+        { id: 'M5', label: '5ª Aula (10:40 - 11:30)', inicio: '10:40', fim1: '11:30', fim2: '12:20', canDouble: true },
+        { id: 'M6', label: '6ª Aula (11:30 - 12:20)', inicio: '11:30', fim1: '12:20', fim2: '', canDouble: false }
+    ];
+
+    // Função utilitária para resolver os slots baseados no segmento e na turma
+    function obterSlots(segmento, turma) {
+        if (segmento === 'fundamental') {
+            const turmaInfo = turmasCarregadas.find(t => t.nome === turma);
+            const isManha = turmaInfo ? (turmaInfo.periodo === 'manha') : true;
+            return isManha ? slotsFundamentalManha : slotsFundamentalTarde;
+        } else if (segmento === 'medio') {
+            return slotsMedio;
+        }
+        return [];
+    }
+
     // ── Injeta o modal de sucesso no DOM ─────────────────────────────────
     const modalHTML = `
     <div id="modal-sucesso" style="
@@ -40,27 +117,209 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalDetalhe = document.getElementById('modal-detalhe');
     document.getElementById('modal-fechar').addEventListener('click', () => {
         modal.style.display = 'none';
+        window.location.href = 'agendamentos_prof.php'; // Redireciona para listagem após confirmação
     });
 
-    // ── Envio do formulário ───────────────────────────────────────────────
+    // ── Lógica Dinâmica dos Filtros ──────────────────────────────────────
+
+    segmentoSelect.addEventListener('change', async () => {
+        const segmento = segmentoSelect.value;
+        
+        // Limpa e desabilita selects filhos
+        anoTurmaSelect.innerHTML = '<option value="">SELECIONE...</option>';
+        disciplinaSelect.innerHTML = '<option value="">SELECIONE A TURMA...</option>';
+        aulaInicioSelect.innerHTML = '<option value="">SELECIONE A TURMA...</option>';
+        
+        anoTurmaSelect.disabled = true;
+        disciplinaSelect.disabled = true;
+        aulaInicioSelect.disabled = true;
+        duracaoSelect.disabled = true;
+        
+        hInicioInput.value = '';
+        hFimInput.value = '';
+        turmasCarregadas = [];
+
+        if (!segmento) return;
+
+        try {
+            const response = await fetch(`obter_dados_agendamento.php?segmento=${segmento}`);
+            const data = await response.json();
+            if (data.sucesso && data.turmas) {
+                turmasCarregadas = data.turmas;
+                anoTurmaSelect.disabled = false;
+                turmasCarregadas.forEach(t => {
+                    const labelPeriodo = t.periodo === 'manha' ? 'Manhã' : 'Tarde';
+                    anoTurmaSelect.innerHTML += `<option value="${t.nome}">${t.nome} (${labelPeriodo})</option>`;
+                });
+            } else {
+                console.error('Erro ao carregar turmas:', data.erro);
+            }
+        } catch (err) {
+            console.error('Erro de rede ao carregar turmas:', err);
+        }
+    });
+
+    anoTurmaSelect.addEventListener('change', () => {
+        const segmento = segmentoSelect.value;
+        const turma = anoTurmaSelect.value;
+
+        disciplinaSelect.innerHTML = '<option value="">SELECIONE...</option>';
+        aulaInicioSelect.innerHTML = '<option value="">SELECIONE...</option>';
+        
+        disciplinaSelect.disabled = true;
+        aulaInicioSelect.disabled = true;
+        duracaoSelect.disabled = true;
+
+        hInicioInput.value = '';
+        hFimInput.value = '';
+
+        if (!turma) return;
+
+        const turmaInfo = turmasCarregadas.find(t => t.nome === turma);
+        if (!turmaInfo) return;
+
+        disciplinaSelect.disabled = false;
+        aulaInicioSelect.disabled = false;
+
+        // 1. Carrega as disciplinas com base no relacionamento da turma no banco
+        if (turmaInfo.materias && turmaInfo.materias.length > 0) {
+            turmaInfo.materias.forEach(d => {
+                disciplinaSelect.innerHTML += `<option value="${d}">${d}</option>`;
+            });
+        }
+
+        // 2. Carrega os slots de aula
+        const slots = obterSlots(segmento, turma);
+        slots.forEach(s => {
+            aulaInicioSelect.innerHTML += `<option value="${s.id}">${s.label}</option>`;
+        });
+    });
+
+    aulaInicioSelect.addEventListener('change', () => {
+        const segmento = segmentoSelect.value;
+        const turma = anoTurmaSelect.value;
+        const slotId = aulaInicioSelect.value;
+
+        duracaoSelect.innerHTML = '';
+        duracaoSelect.disabled = true;
+        hInicioInput.value = '';
+        hFimInput.value = '';
+
+        if (!slotId) return;
+
+        const slots = obterSlots(segmento, turma);
+        const slot = slots.find(s => s.id === slotId);
+
+        if (slot) {
+            duracaoSelect.disabled = false;
+            duracaoSelect.innerHTML += '<option value="1">1 Aula (50 minutos)</option>';
+            
+            if (slot.canDouble) {
+                duracaoSelect.innerHTML += '<option value="2">2 Aulas (até 1h 40m)</option>';
+            }
+            
+            calcularHorarios();
+        }
+    });
+
+    duracaoSelect.addEventListener('change', calcularHorarios);
+    dataInput.addEventListener('change', verificarDisponibilidadeEquipamentos);
+
+    function calcularHorarios() {
+        const segmento = segmentoSelect.value;
+        const turma = anoTurmaSelect.value;
+        const slotId = aulaInicioSelect.value;
+        const duracao = duracaoSelect.value;
+
+        if (!slotId) return;
+
+        const slots = obterSlots(segmento, turma);
+        const slot = slots.find(s => s.id === slotId);
+
+        if (slot) {
+            hInicioInput.value = slot.inicio;
+            hFimInput.value = (duracao === '2' && slot.canDouble) ? slot.fim2 : slot.fim1;
+
+            // Uma vez que os horários ocultos foram atualizados, re-verifica disponibilidade real
+            verificarDisponibilidadeEquipamentos();
+        }
+    }
+
+    // ── Lógica Dinâmica de Verificação de Estoque via API ────────────────
+
+    async function verificarDisponibilidadeEquipamentos() {
+        const data = dataInput.value;
+        const inicio = hInicioInput.value;
+        const fim = hFimInput.value;
+
+        if (!data || !inicio || !fim) return;
+
+        try {
+            const url = `verifica_disponibilidade.php?data=${data}&inicio=${inicio}&fim=${fim}`;
+            const response = await fetch(url);
+            const res = await response.json();
+
+            if (res.sucesso && res.estoque) {
+                const equipCards = document.querySelectorAll('.equip-card');
+                equipCards.forEach(card => {
+                    const id = card.getAttribute('data-id');
+                    const input = card.querySelector('.equip-input');
+                    const badge = card.querySelector('.limit-badge');
+                    
+                    if (input && id in res.estoque) {
+                        const estoqueDisponivel = res.estoque[id];
+                        
+                        input.max = estoqueDisponivel;
+                        badge.textContent = `DISP: ${estoqueDisponivel}`;
+                        badge.style.background = estoqueDisponivel === 0 ? 'var(--accent-red)' : '#00FF66';
+                        
+                        // Se o valor digitado atualmente for maior que o disponível, ajusta automaticamente
+                        if (parseInt(input.value) > estoqueDisponivel) {
+                            input.value = estoqueDisponivel;
+                        }
+                    }
+                });
+            }
+        } catch (err) {
+            console.error('Erro ao verificar estoque disponível:', err);
+        }
+    }
+
+    // ── Submissão e Validações Gerais do Formulário ───────────────────────
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const feedback = document.getElementById('booking-feedback');
         feedback.className = 'feedback-msg hidden';
 
-        // Validação de Fim de Semana
-        const dataInput = document.getElementById('data_reserva').value;
-        if (dataInput) {
-            const dataSelecionada = new Date(dataInput + 'T12:00:00');
-            const diaSemana = dataSelecionada.getDay(); // 0 = Domingo, 6 = Sábado
+        // 1. Validação de Fim de Semana no cliente
+        const dataSelecionada = dataInput.value;
+        if (dataSelecionada) {
+            const dateObj = new Date(dataSelecionada + 'T12:00:00');
+            const diaSemana = dateObj.getDay(); // 0 = Domingo, 6 = Sábado
             if (diaSemana === 0 || diaSemana === 6) {
                 showFeedback('ERRO: Agendamentos não são permitidos aos finais de semana (Sábado e Domingo).', 'error');
                 return;
             }
         }
 
-        // Validação Dinâmica de Quantidade
+        // 2. Validação de Horário do Passado (comparação no timezone local do cliente)
+        const dataReservaStr = dataInput.value;
+        const horaInicioStr = hInicioInput.value;
+        
+        if (dataReservaStr && horaInicioStr) {
+            const agora = new Date();
+            const [ano, mes, dia] = dataReservaStr.split('-');
+            const [hora, min] = horaInicioStr.split(':');
+            const dataHoraReserva = new Date(ano, mes - 1, dia, hora, min, 0);
+
+            if (agora > dataHoraReserva) {
+                showFeedback('ERRO: Horários já passados não estão disponíveis.', 'error');
+                return;
+            }
+        }
+
+        // 3. Validação Dinâmica de Quantidade e Seleção
         const equipInputs = document.querySelectorAll('.equip-input');
         let totalEquipamentos = 0;
         let erroEstoque = false;
@@ -84,10 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Captura valores antes do reset para exibir no modal de sucesso
-        const horaInicio = document.getElementById('horario_inicio').value;
-        const horaFim    = document.getElementById('horario_fim').value;
-
+        // Monta o envio do formulário
         const formData = new FormData(form);
         const btn = form.querySelector('.btn-submit-booking');
 
@@ -96,33 +352,42 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.textContent = 'PROCESSANDO...';
 
             const response = await fetch('processa_reserva.php', { method: 'POST', body: formData });
-
-            // Lê o texto bruto primeiro para detectar respostas corrompidas
             const rawText = await response.text();
             let result;
+
             try {
                 result = JSON.parse(rawText);
             } catch {
-                // Se o JSON veio corrompido mas o status HTTP é 200, algo quebrou no back-end
-                showFeedback('ERRO INTERNO: Resposta inválida do servidor. Contacte o suporte.', 'error');
-                console.error('Resposta bruta do servidor:', rawText);
+                showFeedback('ERRO INTERNO: Resposta inválida do servidor. Contate o administrador.', 'error');
+                console.error('Resposta corrompida do servidor:', rawText);
                 return;
             }
 
             if (result.sucesso) {
                 form.reset();
-                // Reseta aviso de fds
+                
+                // Reseta os estados dos selects para padrão
+                anoTurmaSelect.disabled = true;
+                disciplinaSelect.disabled = true;
+                aulaInicioSelect.disabled = true;
+                duracaoSelect.disabled = true;
+                
                 const aviso = document.getElementById('aviso-fds');
                 if (aviso) aviso.style.display = 'none';
-                document.getElementById('data_reserva').style.borderColor = '';
+                dataInput.style.borderColor = '';
 
-                // Exibe modal com detalhe
-                const dataFormatada = dataInput
-                    ? new Date(dataInput + 'T12:00:00').toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'long', year:'numeric' })
+                // Formata dados de confirmação no modal
+                const dataFormatada = dataSelecionada
+                    ? new Date(dataSelecionada + 'T12:00:00').toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'long', year:'numeric' })
                     : '';
-                modalDetalhe.textContent = dataFormatada
-                    ? `${dataFormatada} · ${horaInicio} – ${horaFim}`
-                    : 'Agendamento registrado com sucesso.';
+                
+                modalDetalhe.innerHTML = `
+                    <strong>Série:</strong> ${anoTurmaSelect.value || ''}<br>
+                    <strong>Disciplina:</strong> ${disciplinaSelect.value || ''}<br>
+                    <strong>Data:</strong> ${dataFormatada}<br>
+                    <strong>Período:</strong> ${horaInicioStr} às ${hFimInput.value}
+                `;
+                
                 modal.style.display = 'flex';
             } else {
                 showFeedback(`FALHA: ${result.erro}`, 'error');

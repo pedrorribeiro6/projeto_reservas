@@ -32,6 +32,7 @@ $professores = $stmt->fetchAll();
             <li><a href="agendamentos_adm.php">TODAS AS RESERVAS</a></li>
             <li><a href="docentes.php" class="active">CORPO DOCENTE</a></li>
             <li><a href="dispositivos.php">DISPOSITIVOS</a></li>
+            <li><a href="turmas.php">TURMAS</a></li>
             <li><a href="logout.php" class="btn-logout">SAIR</a></li>
             <li><button id="theme-toggle" class="nav-theme-btn" aria-label="Alternar Tema">🌞</button></li>
         </ul>

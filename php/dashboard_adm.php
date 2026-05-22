@@ -38,6 +38,7 @@ $total_prof = $stmt2->fetchColumn();
             <li><a href="agendamentos_adm.php">TODAS AS RESERVAS</a></li>
             <li><a href="docentes.php">CORPO DOCENTE</a></li>
             <li><a href="dispositivos.php">DISPOSITIVOS</a></li>
+            <li><a href="turmas.php">TURMAS</a></li>
             <li><a href="logout.php" class="btn-logout">SAIR</a></li>
             <li><button id="theme-toggle" class="nav-theme-btn" aria-label="Alternar Tema">🌞</button></li>
         </ul>
@@ -66,6 +67,12 @@ $total_prof = $stmt2->fetchColumn();
                 <h2>DISPOSITIVOS</h2>
                 <p>Configure o estoque total de computadores, tablets e novos itens.</p>
                 <a href="dispositivos.php" class="btn-action">CONFIGURAR →</a>
+            </div>
+
+            <div class="stat-card">
+                <h2>TURMAS</h2>
+                <p>Cadastre turmas, defina períodos e associe disciplinas escolares para agendamentos.</p>
+                <a href="turmas.php" class="btn-action">GERENCIAR →</a>
             </div>
         </section>
     </main>

@@ -1,0 +1,314 @@
+/* style8.css - Gerenciamento de Turmas e Matérias (Admin) */
+
+.turmas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.turmas-header-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-add-turma, .btn-add-global-materia {
+    background: var(--accent-prof);
+    color: #000;
+    border: none;
+    padding: 1rem 2rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    box-shadow: 4px 4px 0 var(--border-dark);
+    transition: all 0.2s ease;
+}
+
+.btn-add-global-materia {
+    background: transparent;
+    color: var(--text-color);
+    border: 2px solid var(--border-dark);
+}
+
+.btn-add-turma:hover, .btn-add-global-materia:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--accent-prof);
+}
+
+.btn-add-global-materia:hover {
+    border-color: var(--accent-prof);
+    color: var(--accent-prof);
+}
+
+/* --- Seção de Disciplinas Globais --- */
+.global-subjects-section {
+    background: #0F0F13;
+    border: 2px solid var(--border-dark);
+    padding: 2rem;
+    box-shadow: 8px 8px 0 var(--border-dark);
+    margin-bottom: 3.5rem;
+}
+
+.light-theme .global-subjects-section {
+    background: #FFFFFF;
+}
+
+.global-subjects-section h2 {
+    font-size: 1.8rem;
+    color: var(--accent-prof);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.global-subjects-section p {
+    color: #888;
+    font-size: 1.1rem;
+}
+
+.global-subjects-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+/* Custom Scrollbar */
+.global-subjects-list::-webkit-scrollbar, .checkbox-grid::-webkit-scrollbar {
+    width: 6px;
+}
+.global-subjects-list::-webkit-scrollbar-track, .checkbox-grid::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.1);
+}
+.global-subjects-list::-webkit-scrollbar-thumb, .checkbox-grid::-webkit-scrollbar-thumb {
+    background: var(--border-dark);
+    border-radius: 3px;
+}
+
+.global-subject-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 2px solid var(--border-dark);
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 1.05rem;
+    transition: all 0.2s ease;
+}
+
+.light-theme .global-subject-card {
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.global-subject-card:hover {
+    border-color: var(--accent-prof);
+}
+
+.btn-edit-sub, .btn-delete-sub {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 700;
+    transition: transform 0.1s ease;
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.btn-edit-sub {
+    color: var(--accent-prof);
+}
+
+.btn-delete-sub {
+    color: var(--accent-red);
+}
+
+.btn-edit-sub:hover, .btn-delete-sub:hover {
+    transform: scale(1.15);
+}
+
+/* --- Listagem de Turmas por Segmento --- */
+.segment-container {
+    margin-bottom: 4rem;
+}
+
+.segment-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+    border-bottom: 2px solid var(--border-dark);
+    padding-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.segment-title span {
+    font-size: 1.1rem;
+    background: rgba(250, 30, 78, 0.1);
+    color: var(--accent-prof);
+    padding: 0.2rem 0.8rem;
+    border: 1px solid rgba(250, 30, 78, 0.2);
+}
+
+.turmas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.turma-card {
+    background: #0F0F13;
+    border: 2px solid var(--border-dark);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 8px 8px 0 var(--border-dark);
+    transition: all 0.2s ease;
+}
+
+.light-theme .turma-card {
+    background: #FFFFFF;
+}
+
+.turma-card:hover {
+    border-color: var(--accent-prof);
+    box-shadow: 8px 8px 0 var(--accent-prof);
+    transform: translate(-4px, -4px);
+}
+
+.turma-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.turma-card-header h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    text-transform: uppercase;
+}
+
+.periodo-badge {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.periodo-badge.periodo-manha {
+    background: rgba(250, 180, 0, 0.12);
+    color: #FFB300;
+    border: 1px solid rgba(250, 180, 0, 0.25);
+}
+
+.periodo-badge.periodo-tarde {
+    background: rgba(0, 229, 255, 0.12);
+    color: #00E5FF;
+    border: 1px solid rgba(0, 229, 255, 0.25);
+}
+
+.turma-card-body h4 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 0.8rem;
+    letter-spacing: 0.05em;
+}
+
+.turma-subjects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    min-height: 60px;
+    align-content: flex-start;
+}
+
+.subject-tag {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-dark);
+    color: var(--text-color);
+    padding: 0.3rem 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.light-theme .subject-tag {
+    background: rgba(0,0,0,0.03);
+}
+
+.turma-card-footer {
+    display: flex;
+    gap: 1rem;
+}
+
+/* --- Custom Checkbox Grid --- */
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.8rem;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 2px solid var(--border-dark);
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.light-theme .checkbox-grid {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    user-select: none;
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+    accent-color: var(--accent-prof);
+    cursor: pointer;
+}
+
+.empty-state-card {
+    grid-column: 1 / -1;
+    border: 2px dashed var(--border-dark);
+    padding: 3rem;
+    text-align: center;
+    color: #888;
+}
+
+.empty-state-card h3 {
+    font-size: 1.6rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}

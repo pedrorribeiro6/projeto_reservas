@@ -22,6 +22,9 @@ CREATE TABLE IF NOT EXISTS agendamentos (
     qtd_computadores INT DEFAULT 0,
     qtd_tablets INT DEFAULT 0,
     qtd_celulares INT DEFAULT 0,
+    segmento VARCHAR(50) DEFAULT NULL, -- 'fundamental' ou 'medio'
+    ano_turma VARCHAR(50) DEFAULT NULL, -- Exemplos: '6°A', '1°EM A'
+    disciplina VARCHAR(100) DEFAULT NULL,
     data_reserva DATE NOT NULL,
     horario_inicio TIME NOT NULL,
     horario_fim TIME NOT NULL,

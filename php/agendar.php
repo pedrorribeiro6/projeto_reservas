@@ -12,11 +12,9 @@ proteger_pagina('professor');
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/style3.css">
-    <link rel="stylesheet" href="../css/style4.css">
-    <script src="../js/script.js" defer></script>
-    <script src="../js/reserva.js" defer></script>
-    <script src="../js/funcionalidade.js" defer></script>
+    <link rel="stylesheet" href="../css/style3.css?v=3.0">
+    <link rel="stylesheet" href="../css/style4.css?v=3.0">
+
     <link rel="icon" href="../imagens/sys_logo.png" type="image/png">
 </head>
 <body>
@@ -48,29 +46,50 @@ proteger_pagina('professor');
                             ⛔ FINAIS DE SEMANA NÃO SÃO PERMITIDOS
                         </span>
                     </div>
-                    <script>
-                        document.getElementById('data_reserva').addEventListener('change', function () {
-                            const aviso = document.getElementById('aviso-fds');
-                            if (!this.value) { aviso.style.display = 'none'; return; }
-                            const dia = new Date(this.value + 'T12:00:00').getDay();
-                            if (dia === 0 || dia === 6) {
-                                aviso.style.display = 'block';
-                                this.style.borderColor = '#ff4d4d';
-                            } else {
-                                aviso.style.display = 'none';
-                                this.style.borderColor = '';
-                            }
-                        });
-                    </script>
+
+                    
                     <div class="input-box">
-                        <label>HORÁRIO INÍCIO</label>
-                        <input type="time" id="horario_inicio" name="horario_inicio" required>
+                        <label>SEGMENTO</label>
+                        <select id="segmento" name="segmento" required>
+                            <option value="">SELECIONE...</option>
+                            <option value="fundamental">Ensino Fundamental II</option>
+                            <option value="medio">Ensino Médio</option>
+                        </select>
                     </div>
+
                     <div class="input-box">
-                        <label>HORÁRIO FIM</label>
-                        <input type="time" id="horario_fim" name="horario_fim" required>
+                        <label>ANO / TURMA</label>
+                        <select id="ano_turma" name="ano_turma" required disabled>
+                            <option value="">SELECIONE O SEGMENTO...</option>
+                        </select>
+                    </div>
+
+                    <div class="input-box">
+                        <label>DISCIPLINA</label>
+                        <select id="disciplina" name="disciplina" required disabled>
+                            <option value="">SELECIONE A TURMA...</option>
+                        </select>
+                    </div>
+
+                    <div class="input-box">
+                        <label>AULA DE INÍCIO</label>
+                        <select id="aula_inicio" required disabled>
+                            <option value="">SELECIONE A TURMA...</option>
+                        </select>
+                    </div>
+
+                    <div class="input-box">
+                        <label>DURAÇÃO</label>
+                        <select id="duracao_aulas" required disabled>
+                            <option value="1">1 Aula (50 minutos)</option>
+                            <option value="2">2 Aulas (até 1h 40m)</option>
+                        </select>
                     </div>
                 </div>
+
+                <!-- Campos ocultos para manter retrocompatibilidade com o banco de dados -->
+                <input type="hidden" id="horario_inicio" name="horario_inicio">
+                <input type="hidden" id="horario_fim" name="horario_fim">
             </div>
 
             <div class="form-section">
@@ -104,5 +123,8 @@ proteger_pagina('professor');
             <button type="submit" class="btn-action btn-submit-booking">CONFIRMAR AGENDAMENTO</button>
         </form>
     </main>
+    <script src="../js/script.js?v=2.2"></script>
+    <script src="../js/reserva.js?v=2.2"></script>
+    <script src="../js/funcionalidade.js?v=2.2"></script>
 </body>
 </html>

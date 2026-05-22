@@ -62,7 +62,15 @@ $agendamentos = $stmt->fetchAll();
                             <span class="booking-date"><?= date('d/m/Y', strtotime($ag['data_reserva'])) ?></span>
                             <span class="booking-time"><?= date('H:i', strtotime($ag['horario_inicio'])) ?> - <?= date('H:i', strtotime($ag['horario_fim'])) ?></span>
                         </div>
-                        <div class="booking-body">
+                        
+                        <?php if (!empty($ag['segmento']) || !empty($ag['ano_turma']) || !empty($ag['disciplina'])): ?>
+                            <div style="padding: 0.6rem 1.5rem; background: rgba(255, 255, 255, 0.04); border-bottom: 2px solid var(--border-dark); font-size: 0.95rem; font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: flex; gap: 1rem; flex-wrap: wrap;">
+                                <span>🏫 <span style="color: var(--accent-prof);"><?= htmlspecialchars($ag['ano_turma']) ?></span> (<?= $ag['segmento'] === 'fundamental' ? 'Fund. II' : 'Médio' ?>)</span>
+                                <span>📚 DISCIPLINA: <span style="color: var(--accent-prof);"><?= htmlspecialchars($ag['disciplina']) ?></span></span>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <div class="booking-body" style="border-top: <?= !empty($ag['segmento']) ? 'none' : 'default' ?>;">
                             <?php if (count($itens) > 0): ?>
                                 <?php foreach ($itens as $item): ?>
                                     <div class="equip-tag">📦 <?= htmlspecialchars($item['nome']) ?>: <strong><?= $item['quantidade'] ?></strong></div>
