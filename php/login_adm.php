@@ -39,7 +39,7 @@
             </div>
             
             <div class="form-footer-adm">
-                <a href="#">Esqueceu a senha?</a>
+                <a href="criacao_conta.php">Não tem uma conta? Crie uma!</a>
             </div>
         </form>
     </main>

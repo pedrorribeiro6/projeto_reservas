@@ -381,7 +381,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Salva os valores antes de resetar o formulário
                 const serieSelecionada = anoTurmaSelect.value;
                 const disciplinaSelecionada = disciplinaSelect.value;
+                const horaInicioStr = hInicioInput.value;
                 const horaFimSelecionada = hFimInput.value;
+                const duracaoSelecionada = duracaoSelect.value;
 
                 form.reset();
                 
@@ -401,10 +403,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     : '';
                 
                 modalDetalhe.innerHTML = `
-                    <strong>Série:</strong> ${serieSelecionada || ''}<br>
+                    <strong>Turma:</strong> ${serieSelecionada || ''}<br>
                     <strong>Disciplina:</strong> ${disciplinaSelecionada || ''}<br>
+                    <strong>Horário de Uso:</strong> ${duracaoSelecionada === '2' ? '2 Aulas' : '1 Aula'}<br>
                     <strong>Data:</strong> ${dataFormatada}<br>
-                    <strong>Período:</strong> ${horaInicioStr} às ${horaFimSelecionada}
+                    <strong>Horário Reservado:</strong> ${horaInicioStr} às ${horaFimSelecionada}
                 `;
                 
                 modal.style.display = 'flex';
