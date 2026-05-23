@@ -14,6 +14,44 @@ function responder(array $dados): void {
     exit();
 }
 
+// Função auxiliar para determinar o horário de fim da primeira aula selecionada
+function obterFimPrimeiraAula($seg, $periodo, $h_ini) {
+    $h_ini = date('H:i', strtotime($h_ini));
+    if ($periodo === 'manha') {
+        if ($seg === 'fundamental') {
+            switch ($h_ini) {
+                case '07:00': return '07:50';
+                case '07:50': return '08:40';
+                case '08:40': return '09:30';
+                case '09:50': return '10:40';
+                case '10:40': return '11:30';
+                case '11:30': return '12:20';
+            }
+        } else {
+            // medio
+            switch ($h_ini) {
+                case '07:00': return '07:50';
+                case '07:50': return '08:40';
+                case '08:40': return '09:30';
+                case '09:30': return '10:20';
+                case '10:40': return '11:30';
+                case '11:30': return '12:20';
+            }
+        }
+    } else {
+        // tarde
+        switch ($h_ini) {
+            case '12:40': return '13:30';
+            case '13:30': return '14:40';
+            case '14:40': return '15:10';
+            case '15:30': return '16:20';
+            case '16:20': return '17:10';
+            case '17:10': return '18:00';
+        }
+    }
+    return date('H:i', strtotime($h_ini) + 50 * 60);
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_professor = $_SESSION['usuario_id'];
     $data_reserva = $_POST['data_reserva'] ?? '';
@@ -29,16 +67,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         responder(['sucesso' => false, 'erro' => 'Preencha todos os campos obrigatórios (Segmento, Turma, Disciplina, Data e Período).']);
     }
 
-    // 2. Validação de Datas e Horários Passados (Fuso Horário America/Sao_Paulo)
+    // 2. Validação de Datas e Aulas Passadas (Fuso Horário America/Sao_Paulo)
     $timezone = new DateTimeZone('America/Sao_Paulo');
     $agora = new DateTime('now', $timezone);
     $data_atual = $agora->format('Y-m-d');
     $horario_atual = $agora->format('H:i');
 
-    $h_reserva_inicio = date('H:i', strtotime($horario_inicio));
+    // Busca o período da turma no banco de dados para mapear as aulas
+    $stmt_periodo = $pdo->prepare("SELECT periodo FROM turmas WHERE nome = ? LIMIT 1");
+    $stmt_periodo->execute([$ano_turma]);
+    $periodo = $stmt_periodo->fetchColumn();
 
-    if ($data_reserva < $data_atual || ($data_reserva === $data_atual && $h_reserva_inicio < $horario_atual)) {
-        responder(['sucesso' => false, 'erro' => 'Horários já passados não estão disponíveis.']);
+    $h_reserva_fim_aula = obterFimPrimeiraAula($segmento, $periodo, $horario_inicio);
+
+    if ($data_reserva < $data_atual || ($data_reserva === $data_atual && $h_reserva_fim_aula < $horario_atual)) {
+        responder(['sucesso' => false, 'erro' => 'Aulas já passadas não estão disponíveis para reserva.']);
     }
 
     // 3. Validação de Fim de Semana
@@ -68,9 +111,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         $isManha = ($periodo === 'manha');
         if ($isManha) {
-            $intervalos = [
-                ['10:20', '10:40']
-            ];
+            if ($seg === 'fundamental') {
+                $intervalos = [
+                    ['09:30', '09:50']
+                ];
+            } else {
+                $intervalos = [
+                    ['10:20', '10:40']
+                ];
+            }
         } else {
             $intervalos = [
                 ['15:10', '15:30']

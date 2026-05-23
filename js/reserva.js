@@ -37,12 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Definição dos Slots de Aulas e Regras de Negócio ─────────────────
 
-    // Grade do Ensino Fundamental II (Manhã) - Aulas de 50 minutos e intervalo 10:20-10:40
+    // Grade do Ensino Fundamental II (Manhã) - Aulas de 50 minutos e intervalo 09:30-09:50
     const slotsFundamentalManha = [
         { id: 'FM1', label: '1ª Aula (07:00 - 07:50)', inicio: '07:00', fim1: '07:50', fim2: '08:40', canDouble: true },
         { id: 'FM2', label: '2ª Aula (07:50 - 08:40)', inicio: '07:50', fim1: '08:40', fim2: '09:30', canDouble: true },
-        { id: 'FM3', label: '3ª Aula (08:40 - 09:30)', inicio: '08:40', fim1: '09:30', fim2: '10:20', canDouble: true },
-        { id: 'FM4', label: '4ª Aula (09:30 - 10:20)', inicio: '09:30', fim1: '10:20', fim2: '', canDouble: false }, // Intervalo a seguir (10:20 - 10:40)
+        { id: 'FM3', label: '3ª Aula (08:40 - 09:30)', inicio: '08:40', fim1: '09:30', fim2: '', canDouble: false }, // Intervalo a seguir (09:30 - 09:50)
+        { id: 'FM4', label: '4ª Aula (09:50 - 10:40)', inicio: '09:50', fim1: '10:40', fim2: '11:30', canDouble: true },
         { id: 'FM5', label: '5ª Aula (10:40 - 11:30)', inicio: '10:40', fim1: '11:30', fim2: '12:20', canDouble: true },
         { id: 'FM6', label: '6ª Aula (11:30 - 12:20)', inicio: '11:30', fim1: '12:20', fim2: '', canDouble: false }
     ];
@@ -313,19 +313,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // 2. Validação de Horário do Passado (comparação no timezone local do cliente)
+        // 2. Validação de Aula do Passado (comparação no timezone local do cliente)
         const dataReservaStr = dataInput.value;
-        const horaInicioStr = hInicioInput.value;
+        const slotId = aulaInicioSelect.value;
         
-        if (dataReservaStr && horaInicioStr) {
-            const agora = new Date();
-            const [ano, mes, dia] = dataReservaStr.split('-');
-            const [hora, min] = horaInicioStr.split(':');
-            const dataHoraReserva = new Date(ano, mes - 1, dia, hora, min, 0);
+        if (dataReservaStr && slotId) {
+            const slots = obterSlots(segmentoSelect.value, anoTurmaSelect.value);
+            const slot = slots.find(s => s.id === slotId);
+            if (slot) {
+                const agora = new Date();
+                const [ano, mes, dia] = dataReservaStr.split('-');
+                const [hora, min] = slot.fim1.split(':');
+                const dataHoraFimAula = new Date(ano, mes - 1, dia, hora, min, 0);
 
-            if (agora > dataHoraReserva) {
-                showFeedback('ERRO: Horários já passados não estão disponíveis.', 'error');
-                return;
+                if (agora > dataHoraFimAula) {
+                    showFeedback('ERRO: Esta aula já terminou e não está disponível para reserva.', 'error');
+                    return;
+                }
             }
         }
 

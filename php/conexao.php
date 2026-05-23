@@ -12,7 +12,7 @@ $host = 'localhost';
 $dbname = 'projeto_reservas';
 $user = 'root';
 $pass = ''; // XAMPP normalmente usa senha vazia
-$port = '3307'; // A InfinityFree não exige a porta, pode apagar essa linha quando publicar
+$port = '3306'; // A InfinityFree não exige a porta, pode apagar essa linha quando publicar
 
 try {
     $pdo = new PDO(
